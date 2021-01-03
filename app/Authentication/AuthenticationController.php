@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Authentication;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class AuthenticationController extends Controller
 {
-    public function authenticate(Request $request): void
+    public function authenticate(AuthenticationRequest $request, AuthServerInterface $authServer): void
     {
-        $authorizationCode = $request->input('code');
-        $shopId = $request->input('shop_id');
-
+        $token = Token::findOrCreate($request->shopId());
+        $token->fill($authServer->requestAccessToken($request->code()));
+        $token->save();
     }
 }

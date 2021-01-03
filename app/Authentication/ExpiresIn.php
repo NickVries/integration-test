@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Authentication;
 
-use App\Authentication\Exception\InvalidExpiresInSecondsException;
+use App\Authentication\Exceptions\InvalidExpiresInSecondsException;
 use Carbon\Carbon;
 use JetBrains\PhpStorm\Immutable;
 

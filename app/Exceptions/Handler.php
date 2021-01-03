@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Exceptions;
 
+use App\Authentication\Exceptions\AuthRequestException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -13,7 +15,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        AuthRequestException::class,
     ];
 
     /**
@@ -21,20 +23,5 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-    }
+    protected $dontFlash = [];
 }

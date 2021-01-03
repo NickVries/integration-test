@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Authentication;
 
-use App\Authentication\Exception\InvalidExpiresInSecondsException;
+use App\Authentication\Exceptions\InvalidExpiresInSecondsException;
 use App\Authentication\ExpiresAt;
 use App\Authentication\ExpiresIn;
 use Carbon\Carbon;

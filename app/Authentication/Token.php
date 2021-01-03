@@ -1,4 +1,6 @@
 <?php
+/** @noinspection TraitsPropertiesConflictsInspection */
+/** @noinspection PhpMissingFieldTypeInspection */
 
 declare(strict_types=1);
 
@@ -10,6 +12,7 @@ use App\Support\ShopIdCaster;
 use App\Support\TokenTypeCaster;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @property ShopId    shop_id
@@ -23,6 +26,20 @@ class Token extends Model
 {
     use HasTimestamps;
 
+    public $incrementing = false;
+
+    protected $primaryKey = 'shop_id';
+
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'access_token',
+        'refresh_token',
+        'token_type',
+        'expires_in',
+        'expires_at',
+    ];
+
     protected $casts = [
         'shop_id'    => ShopIdCaster::class,
         'expires_in' => ExpiresInCaster::class,
@@ -30,22 +47,26 @@ class Token extends Model
         'token_type' => TokenTypeCaster::class,
     ];
 
+    #[Pure]
     public static function create(
-        ShopId $shopId,
-        string $accessToken,
-        string $refreshToken,
-        ExpiresIn $expiresIn,
-        TokenType $tokenType
+        ShopId $shopId
     ): self {
         $token = new self();
         $token->shop_id = $shopId;
-        $token->access_token = $accessToken;
-        $token->refresh_token = $refreshToken;
-        $token->expires_in = $expiresIn;
-        $token->expires_at = $token->expires_in->toExpiresAt();
-        $token->token_type = $tokenType;
 
         return $token;
+    }
+
+    /**
+     * Find an existing token or create a new one
+     *
+     * @param ShopId $shopId
+     * @return self
+     */
+    public static function findOrCreate(ShopId $shopId): self
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return self::query()->find($shopId->toString()) ?? self::create($shopId);
     }
 
     /**
@@ -54,7 +75,7 @@ class Token extends Model
      *
      * @param AuthServerInterface $exactOnlineAuthServer
      */
-    public function renew(AuthServerInterface $exactOnlineAuthServer): void
+    private function renew(AuthServerInterface $exactOnlineAuthServer): void
     {
         $tokens = $exactOnlineAuthServer->refreshToken($this->refresh_token);
 
@@ -82,5 +103,17 @@ class Token extends Model
         }
 
         return $this->access_token;
+    }
+
+    /**
+     * Registers an event that ensures that before saving the @link expires_at property is updated if empty
+     */
+    protected static function booted(): void
+    {
+        self::saving(function (self $token) {
+            if (!$token->expires_at && $token->expires_in) {
+                $token->expires_at = $token->expires_in->toExpiresAt();
+            }
+        });
     }
 }

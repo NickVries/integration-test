@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use Faker\Factory;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use function random_int;
 
 class TokenTest extends TestCase
 {
@@ -26,22 +25,8 @@ class TokenTest extends TestCase
             'toString' => $factory->uuid,
         ]);
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $expiresInSeconds = random_int(0, 600);
-
         /** @noinspection UnnecessaryAssertionInspection */
-        self::assertInstanceOf(Token::class, Token::create(
-            $shopIdMock,
-            $factory->text,
-            $factory->text,
-            Mockery::mock(ExpiresIn::class, [
-                'toSeconds'   => $expiresInSeconds,
-                'toExpiresAt' => Mockery::mock(ExpiresAt::class, [
-                    'toDateTimeString' => Carbon::now()->addSeconds($expiresInSeconds)->toDateTimeString(),
-                ]),
-            ]),
-            Mockery::mock(TokenType::class, ['getValue' => 'bearer']),
-        ));
+        self::assertInstanceOf(Token::class, Token::create($shopIdMock));
     }
 
     public function test_should_get_existing_access_token_if_not_expired(): void
@@ -55,14 +40,21 @@ class TokenTest extends TestCase
 
         $expiresInMock = Mockery::mock(ExpiresIn::class, [
             'toSeconds'   => 600,
-            'toExpiresAt' => Mockery::mock(ExpiresAt::class, [
-                'toDateTimeString' => Carbon::now()->addSeconds(600)->toDateTimeString(),
-                'hasExpired'       => false,
-            ]),
         ]);
 
         $accessToken = $faker->text;
-        $token = Token::create($shopIdMock, $accessToken, $faker->text, $expiresInMock, $tokenTypeMock);
+        $token = Token::create($shopIdMock);
+        $expiresAtMock = Mockery::mock(ExpiresAt::class, [
+            'toDateTimeString' => Carbon::now()->addSeconds(600)->toDateTimeString(),
+            'hasExpired'       => false,
+        ]);
+        $token->fill([
+            'access_token' => $accessToken,
+            'refresh_token' => $faker->text,
+            'token_type' => $tokenTypeMock,
+            'expires_in' => $expiresInMock,
+            'expires_at' => $expiresAtMock,
+        ]);
         $newAccessToken = $token->obtainAccessToken(Mockery::mock(AuthServerInterface::class));
 
         self::assertSame($accessToken, $newAccessToken);
@@ -79,13 +71,21 @@ class TokenTest extends TestCase
 
         $expiresInMock = Mockery::mock(ExpiresIn::class, [
             'toSeconds'   => 600,
-            'toExpiresAt' => Mockery::mock(ExpiresAt::class, [
-                'toDateTimeString' => Carbon::now()->addSeconds(600)->toDateTimeString(),
-                'hasExpired'       => true,
-            ]),
         ]);
 
-        $token = Token::create($shopIdMock, $faker->text, $faker->text, $expiresInMock, $tokenTypeMock);
+        $expiresAtMock = Mockery::mock(ExpiresAt::class, [
+            'toDateTimeString' => Carbon::now()->addSeconds(600)->toDateTimeString(),
+            'hasExpired'       => true,
+        ]);
+
+        $token = Token::create($shopIdMock);
+        $token->fill([
+            'access_token' => $faker->text,
+            'refresh_token' => $faker->text,
+            'token_type' => $tokenTypeMock,
+            'expires_in' => $expiresInMock,
+            'expires_at' => $expiresAtMock,
+        ]);
 
         $newRefreshToken = $faker->text;
         $newAccessToken = $faker->text;
