@@ -95,6 +95,34 @@ if [ $# -gt 0 ]; then
     echo "Making directories writable for www-data..."
     fixPermissions
 
+    # Initialize the database if necessary.
+    echo ""
+    sleep 2 # To make sure the database server is running. TODO: Replace with polling.
+    EXISTING_DB_USERNAME=`${COMPOSE} exec -u postgres postgres psql -t -c "select usename from pg_user WHERE usename = '${DB_USERNAME}';"`
+    EXISTING_DB_USERNAME="$(echo -e "${EXISTING_DB_USERNAME}" | tr -d '[:space:]')" # Remove whitespace.
+    if [ -z ${EXISTING_DB_USERNAME} ]; then
+      echo "Creating database user..."
+      ${COMPOSE} exec -u postgres postgres psql -c "CREATE USER ${DB_USERNAME} WITH PASSWORD '${DB_PASSWORD}';"
+    else
+      echo "Database user already exists..."
+    fi
+
+    EXISTING_DB=`${COMPOSE} exec -u postgres postgres psql -t -c "select datname from pg_database WHERE datname = '${DB_DATABASE}';"`
+    EXISTING_DB="$(echo -e "${EXISTING_DB}" | tr -d '[:space:]')" # Remove whitespace.
+    if [ -z ${EXISTING_DB} ]; then
+      echo "Creating database..."
+      ${COMPOSE} exec -u postgres postgres psql -c "CREATE DATABASE ${DB_DATABASE};"
+      ${COMPOSE} exec -u postgres postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_DATABASE} TO ${DB_USERNAME};"
+      ${COMPOSE} exec -u postgres postgres psql -d ${DB_DATABASE} -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+    else
+      echo "Database already exists..."
+    fi
+
+    # Run migrations
+    echo ""
+    echo "Running migrations..."
+    ./mp.sh artisan migrate:fresh
+
     # Stop services or restart if they were already running.
     if [ "${RUNNING}" == "" ]; then
       echo ""
