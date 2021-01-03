@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: docker/app/Dockerfile
+      args:
+        REGISTRY: ${REGISTRY}
     image: myparcelcom/integration-exact-online:v1-dev
     working_dir: /opt/app
     environment:

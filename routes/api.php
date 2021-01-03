@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => new JsonResponse([
     'meta' => [
-        'title'  => 'MyParcel.com Microservice for Exact Online',
+        'title'  => 'MyParcel.com integration microservice for ExactOnline.nl',
         'status' => 'OK',
     ],
 ]));
@@ -16,6 +16,6 @@ Route::get('/', fn() => new JsonResponse([
 Route::group(
     ['prefix' => 'public'],
     function () {
-        Route::post('authenticate', AuthenticationController::class.'@authenticate');
+        Route::post('authenticate', AuthenticationController::class . '@authenticate')->name('authenticate');
     }
 );

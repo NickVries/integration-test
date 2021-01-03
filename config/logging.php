@@ -3,6 +3,7 @@ declare(strict_types=1);
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Rollbar\Laravel\MonologHandler;
 
 return [
 
@@ -37,7 +38,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['stdout', 'rollbar'],
             'ignore_exceptions' => false,
         ],
 
@@ -52,6 +53,13 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
+        ],
+
+        'rollbar' => [
+            'driver' => 'monolog',
+            'handler' => MonologHandler::class,
+            'access_token' => env('ROLLBAR_TOKEN'),
+            'level' => env('ROLLBAR_LOG_LEVEL', 'debug'),
         ],
 
         'slack' => [
@@ -78,6 +86,15 @@ return [
             'formatter' => env('LOG_STDERR_FORMATTER'),
             'with' => [
                 'stream' => 'php://stderr',
+            ],
+        ],
+
+        'stdout' => [
+            'driver'  => 'monolog',
+            'handler' => Monolog\Handler\StreamHandler::class,
+            'with'    => [
+                'stream' => 'php://stdout',
+                'level'  => Monolog\Logger::DEBUG,
             ],
         ],
 

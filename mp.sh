@@ -21,12 +21,12 @@ ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Check if the file with environment variables exists, otherwise copy the default file.
 if [ ! -f ${ROOT_DIR}/.env ]; then
-  if [ ! -f ${ROOT_DIR}/.env.dist ]; then
-    echo -e "\033[0;97;101m Unable to locate .env.dist file \033[0m" >&2
+  if [ ! -f ${ROOT_DIR}/.env.example ]; then
+    echo -e "\033[0;97;101m Unable to locate .env.example file \033[0m" >&2
     exit 1
   fi
 
-  cp -a ${ROOT_DIR}/.env.dist ${ROOT_DIR}/.env
+  cp -a ${ROOT_DIR}/.env.example ${ROOT_DIR}/.env
 
   echo -e "\033[0;30;47m .env file has been created \033[0m"
 fi
