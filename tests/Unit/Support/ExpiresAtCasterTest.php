@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Authentication\ExpiresAt;
+use App\Authentication\Domain\ExpiresAt;
 use App\Support\ExpiresAtCaster;
 use Carbon\Carbon;
 use Faker\Factory;

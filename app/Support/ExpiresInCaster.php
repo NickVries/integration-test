@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\Authentication\ExpiresIn;
+use App\Authentication\Domain\ExpiresIn;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\Pure;

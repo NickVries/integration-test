@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Authentication\AuthenticationController;
+use App\Authentication\Http\Controllers\AuthenticationController;
+use App\Shipments\Http\Controllers\ShipmentController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,7 @@ Route::group(
         Route::post('authenticate', AuthenticationController::class . '@authenticate')->name('authenticate');
     }
 );
+
+Route::get('shipments', ShipmentController::class . '@get')
+    ->name('get-shipments')
+    ->middleware('set_access_token');

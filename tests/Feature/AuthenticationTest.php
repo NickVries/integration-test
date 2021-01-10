@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Authentication\AuthServer;
-use App\Authentication\AuthServerInterface;
+use App\Authentication\Domain\AuthServer;
+use App\Authentication\Domain\AuthServerInterface;
+use App\Http\ExactAuthClient;
 use Faker\Factory;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Utils;
 use Mockery;
@@ -21,7 +21,7 @@ class AuthenticationTest extends TestCase
         $faker = Factory::create();
 
         $this->app->singleton(AuthServerInterface::class, fn() => new AuthServer(
-            Mockery::mock(Client::class, [
+            Mockery::mock(ExactAuthClient::class, [
                 'post' => Mockery::mock(ResponseInterface::class, [
                     'getBody' => Utils::jsonEncode([
                         'refresh_token' => $faker->text,
@@ -38,8 +38,10 @@ class AuthenticationTest extends TestCase
 
         $shopId = $faker->uuid;
         $response = $this->post('/public/authenticate', [
-            'shop_id' => $shopId,
-            'code'    => $faker->text,
+            'data' => [
+                'shop_id' => $shopId,
+                'code'    => $faker->text,
+            ]
         ]);
 
         $response->assertStatus(200);
@@ -53,7 +55,7 @@ class AuthenticationTest extends TestCase
     {
         $faker = Factory::create();
 
-        $clientMock = Mockery::mock(Client::class);
+        $clientMock = Mockery::mock(ExactAuthClient::class);
         $clientMock->shouldReceive('post')->andThrow(
             Mockery::mock(RequestException::class, [
                 'getResponse' => null,
@@ -68,8 +70,10 @@ class AuthenticationTest extends TestCase
 
         $shopId = $faker->uuid;
         $response = $this->post('/public/authenticate', [
-            'shop_id' => $shopId,
-            'code'    => $faker->text,
+            'data' => [
+                'shop_id' => $shopId,
+                'code'    => $faker->text,
+            ]
         ]);
 
         $response->assertStatus(400);
@@ -92,7 +96,7 @@ class AuthenticationTest extends TestCase
     {
         $faker = Factory::create();
 
-        $clientMock = Mockery::mock(Client::class);
+        $clientMock = Mockery::mock(ExactAuthClient::class);
         $clientMock->shouldReceive('post')->andThrow(
             Mockery::mock(RequestException::class, [
                 'getResponse' => Mockery::mock(ResponseInterface::class, [
@@ -113,8 +117,10 @@ class AuthenticationTest extends TestCase
 
         $shopId = $faker->uuid;
         $response = $this->post('/public/authenticate', [
-            'shop_id' => $shopId,
-            'code'    => $faker->text,
+            'data' => [
+                'shop_id' => $shopId,
+                'code'    => $faker->text,
+            ]
         ]);
 
         $response->assertStatus(400);

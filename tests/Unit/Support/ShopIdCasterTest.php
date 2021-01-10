@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Authentication\ShopId;
+use App\Authentication\Domain\ShopId;
 use App\Support\ShopIdCaster;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;

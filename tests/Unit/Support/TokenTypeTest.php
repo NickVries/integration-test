@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Authentication\TokenType;
+use App\Authentication\Domain\TokenType;
 use App\Support\TokenTypeCaster;
 use Illuminate\Database\Eloquent\Model;
 use Mockery;

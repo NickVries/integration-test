@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Authentication\ExpiresIn;
+use App\Authentication\Domain\ExpiresIn;
 use App\Support\ExpiresInCaster;
 use Illuminate\Database\Eloquent\Model;
 use Mockery;
