@@ -17,6 +17,7 @@ Route::get('/', fn() => new JsonResponse([
 Route::group(
     ['prefix' => 'public'],
     function () {
+        Route::post('init-auth', AuthenticationController::class . '@init');
         Route::post('authenticate', AuthenticationController::class . '@authenticate')->name('authenticate');
     }
 );

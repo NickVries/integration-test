@@ -37,4 +37,9 @@ class AuthenticationRequest extends FormRequest
     {
         return $this->input('data.code');
     }
+
+    public function redirectUri(): string
+    {
+        return $this->input('data.redirect_uri');
+    }
 }

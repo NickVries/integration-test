@@ -68,7 +68,7 @@ class GetShipmentsTest extends TestCase
         $shippingMethod = $faker->word;
         $totalAmount = random_int(100, 999);
         $currencyCode = $faker->currencyCode;
-        $quantity = random_int(0, 10);
+        $quantity = random_int(1, 10);
         $itemDescription = $faker->text;
 
         $salesOrdersResponse = new Response(200, [], json_encode([

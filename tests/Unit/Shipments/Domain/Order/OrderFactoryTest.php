@@ -26,16 +26,16 @@ class OrderFactoryTest extends TestCase
 
         $orderDescription = $faker->text;
         $orderId = $faker->uuid;
-        $orderAmount = random_int(0, 1000);
+        $orderAmount = random_int(1, 1000);
         $orderCurrencyCode = $faker->currencyCode;
         $orderShippingMethodDescription = $faker->word;
 
-        $orderLineAmount = random_int(0, 1000);
+        $orderLineAmount = random_int(1, 1000);
         $orderLineDescription = $faker->text;
         $orderLineItemDescription = $faker->text;
-        $orderLineQuantity = random_int(0, 10);
+        $orderLineQuantity = random_int(1, 10);
 
-        $itemWeight = random_int(0, 100);
+        $itemWeight = random_int(1, 100);
         $itemPictureUrl = $faker->imageUrl();
 
         $factory = new OrderFactory(
