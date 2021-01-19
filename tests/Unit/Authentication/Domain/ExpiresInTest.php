@@ -25,7 +25,7 @@ class ExpiresInTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        new ExpiresIn(random_int(0, 600));
+        new ExpiresIn(random_int(1, 600));
     }
 
     public function test_should_create_expires_at_date_time_from_expires_in_value_object(): void
@@ -33,7 +33,7 @@ class ExpiresInTest extends TestCase
         $now = Carbon::now();
         Carbon::setTestNow($now);
         /** @noinspection PhpUnhandledExceptionInspection */
-        $seconds = random_int(0, 600);
+        $seconds = random_int(1, 600);
         $expectedExpiresAt = new ExpiresAt($now->copy()->addSeconds($seconds));
 
         $expiresIn = new ExpiresIn($seconds);
@@ -46,7 +46,7 @@ class ExpiresInTest extends TestCase
     public function test_should_convert_expires_in_value_object_to_seconds(): void
     {
         /** @noinspection PhpUnhandledExceptionInspection */
-        $seconds = random_int(0, 600);
+        $seconds = random_int(1, 600);
         $expiresIn = new ExpiresIn($seconds);
 
         self::assertEquals($seconds, $expiresIn->toSeconds());

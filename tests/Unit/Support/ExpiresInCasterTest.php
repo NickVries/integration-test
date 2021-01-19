@@ -18,7 +18,7 @@ class ExpiresInCasterTest extends TestCase
         $caster = new ExpiresInCaster();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $seconds = random_int(0, 600);
+        $seconds = random_int(1, 600);
 
         $expiresIn = $caster->get(
             Mockery::mock(Model::class),
@@ -35,7 +35,7 @@ class ExpiresInCasterTest extends TestCase
         $caster = new ExpiresInCaster();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $seconds = random_int(0, 600);
+        $seconds = random_int(1, 600);
 
         $expiresInMock = Mockery::mock(ExpiresIn::class, ['toSeconds' => $seconds]);
         $modelMock = Mockery::mock(Model::class);

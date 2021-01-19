@@ -24,15 +24,15 @@ class OrderLineFactoryTest extends TestCase
                 'fetchOneByItemId' => Mockery::mock(Item::class, [
                     'getDescription' => $faker->text,
                     'getWeight'      => Mockery::mock(Weight::class, [
-                        'toGrams' => random_int(0, 1000),
+                        'toGrams' => random_int(1, 1000),
                     ]),
                     'getPictureUrl'  => $faker->imageUrl(),
                 ]),
             ])
         );
 
-        $amount = (float) random_int(0, 1000);
-        $quantity = (float) random_int(0, 100);
+        $amount = (float) random_int(1, 1000);
+        $quantity = (float) random_int(1, 100);
         $description = $faker->text;
         $itemDescription = $faker->text;
 

@@ -105,7 +105,7 @@ class GetShipmentsTest extends TestCase
         $city = $faker->city;
         $postcode = $faker->postcode;
         $streetName = $faker->streetName;
-        $streetNumber = random_int(0, 99);
+        $streetNumber = random_int(1, 99);
 
         $deliverAddressResponse = new Response(200, [], json_encode([
             'd' => [
@@ -121,7 +121,7 @@ class GetShipmentsTest extends TestCase
             ],
         ], JSON_THROW_ON_ERROR));
 
-        $weight = random_int(0, 100);
+        $weight = random_int(1, 100);
         $pictureUrl = $faker->imageUrl();
 
         $itemResponse = new Response(200, [], json_encode([
