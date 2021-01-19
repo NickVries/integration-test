@@ -3,11 +3,11 @@
 namespace App\Authentication\Http\Requests;
 
 use App\Authentication\Domain\ShopId;
+use App\Rules\UuidRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Ramsey\Uuid\Uuid;
-use function urldecode;
 
-class AuthenticationRequest extends FormRequest
+class InitAuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,16 +26,19 @@ class AuthenticationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'data.shop_id'      => ['required', 'string', new UuidRule()],
+            'data.redirect_uri' => ['required', 'string'],
+        ];
     }
 
-    public function sessionToken(): string
+    public function shopId(): ShopId
     {
-        return $this->query('session_token');
+        return new ShopId(Uuid::fromString($this->input('data.shop_id')));
     }
 
-    public function code(): string
+    public function redirectUri(): string
     {
-        return urldecode($this->input('code'));
+        return $this->input('data.redirect_uri');
     }
 }

@@ -47,12 +47,14 @@ class AuthorizationSession
     public function fetch(
         string $token
     ): array {
-        if (!$this->cache->has($token)) {
+        $key = self::TOKEN_PREFIX . $token;
+
+        if (!$this->cache->has($key)) {
             /** @noinspection ThrowRawExceptionInspection */
             throw new AuthSessionExpiredException();
         }
 
-        $payload = $this->cache->pull($token);
+        $payload = $this->cache->pull($key);
 
         return [
             'shop_id'      => new ShopId(Uuid::fromString($payload['shop_id'])),

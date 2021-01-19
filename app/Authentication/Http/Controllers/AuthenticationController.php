@@ -9,6 +9,7 @@ use App\Authentication\Domain\AuthorizationSession;
 use App\Authentication\Domain\AuthServerInterface;
 use App\Authentication\Domain\Token;
 use App\Authentication\Http\Requests\AuthenticationRequest;
+use App\Authentication\Http\Requests\InitAuthRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,7 @@ use function response;
 
 class AuthenticationController extends Controller
 {
-    public function init(AuthenticationRequest $request, AuthorizationSession $authorizationSession): JsonResponse
+    public function init(InitAuthRequest $request, AuthorizationSession $authorizationSession): JsonResponse
     {
         $sessionToken = $authorizationSession->save($request->shopId(), $request->redirectUri());
 
