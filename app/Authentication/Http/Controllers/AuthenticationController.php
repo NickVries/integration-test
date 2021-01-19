@@ -39,10 +39,15 @@ class AuthenticationController extends Controller
         AuthorizationSession $authorizationSession,
         AuthServerInterface $authServer
     ): RedirectResponse {
-        $payload = $authorizationSession->fetch($request->sessionToken());
+        $sessionToken = $request->sessionToken();
+
+        $payload = $authorizationSession->fetch($sessionToken);
 
         $token = Token::findOrCreate($payload['shop_id']);
-        $token->fill($authServer->requestAccessToken($request->code()));
+        $token->fill($authServer->requestAccessToken(
+            $request->code(),
+            config('exact.auth.redirect_uri') . "?session_token=${sessionToken}")
+        );
         $token->save();
 
         return response()->redirectTo($payload['redirect_uri']);

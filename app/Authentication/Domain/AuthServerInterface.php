@@ -22,12 +22,14 @@ interface AuthServerInterface
      * Request the initial access and refresh tokens based on authorization code grant
      *
      * @param string $code
+     * @param string $redirectUri
      * @return array
      * @throws AuthRequestException
      */
     #[ArrayShape(self::RESPONSE_FORMAT)]
     public function requestAccessToken(
-        string $code
+        string $code,
+        string $redirectUri
     ): array;
 
     /**

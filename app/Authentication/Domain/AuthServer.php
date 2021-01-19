@@ -18,8 +18,7 @@ class AuthServer implements AuthServerInterface
     public function __construct(
         private ExactAuthClient $client,
         private string $clientId,
-        private string $clientSecret,
-        private string $redirectUri
+        private string $clientSecret
     ) {
     }
 
@@ -29,11 +28,12 @@ class AuthServer implements AuthServerInterface
      */
     #[ArrayShape(AuthServerInterface::RESPONSE_FORMAT)]
     public function requestAccessToken(
-        string $code
+        string $code,
+        string $redirectUri
     ): array {
         return $this->request([
             'grant_type'   => 'authorization_code',
-            'redirect_uri' => $this->redirectUri,
+            'redirect_uri' => $redirectUri,
             'code'         => $code,
         ]);
     }

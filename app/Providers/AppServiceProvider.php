@@ -25,7 +25,6 @@ class AppServiceProvider extends ServiceProvider
             new ExactAuthClient(),
             (string) config('exact.auth.client_id'),
             (string) config('exact.auth.client_secret'),
-            (string) config('exact.auth.redirect_uri'),
         ));
 
         if (!$this->app->environment('testing')) {
