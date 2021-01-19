@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Authentication\Domain\AuthorizationSession;
 use App\Authentication\Domain\AuthServer;
 use App\Authentication\Domain\AuthServerInterface;
 use App\Http\ExactAuthClient;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use function config;
 
@@ -25,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
             (string) config('exact.auth.client_secret'),
             (string) config('exact.auth.redirect_uri'),
         ));
+
+        if (!$this->app->environment('testing')) {
+            $this->app->singleton(AuthorizationSession::class, fn() => new AuthorizationSession(
+                Cache::store('redis')
+            ));
+        }
     }
 
     /**

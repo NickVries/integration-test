@@ -28,14 +28,19 @@ class AuthenticationRequest extends FormRequest
         return [];
     }
 
-    public function shopId(): ShopId
+    public function sessionToken(): string
     {
-        return new ShopId(Uuid::fromString($this->input('data.shop_id')));
+        return $this->query('session_token');
     }
 
     public function code(): string
     {
-        return $this->input('data.code');
+        return $this->input('code');
+    }
+
+    public function shopId(): ShopId
+    {
+        return new ShopId(Uuid::fromString($this->input('data.shop_id')));
     }
 
     public function redirectUri(): string

@@ -13,7 +13,7 @@ class AuthorizationLink
     public function __construct(
         private string $clientId,
         private string $redirectUri,
-        private string $token
+        private string $sessionToken
     ) {
     }
 
@@ -25,7 +25,7 @@ class AuthorizationLink
             'path'   => '/api/oauth2/auth',
             'query'  => http_build_query([
                 'client_id'     => $this->clientId,
-                'redirect_uri'  => $this->redirectUri . '?token=' . $this->token,
+                'redirect_uri'  => $this->redirectUri . '?session_token=' . $this->sessionToken,
                 'response_type' => 'code',
             ]),
         ]);
