@@ -66,7 +66,7 @@ class AuthorizationSessionTest extends TestCase
         $authSession->fetch($faker->uuid);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Mockery::close();
