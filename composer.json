@@ -8,12 +8,13 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.0",
         "crisu83/php-conversion": "^0.5.2",
         "curiosity26/odataquery": "^1.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
+        "jonahgeorge/jaeger-client-php": "^0.3.0",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "myclabs/php-enum": "^1.7",
@@ -53,6 +54,7 @@
         }
     },
     "prefer-stable": true,
+    "minimum-stability": "dev",
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

@@ -78,13 +78,13 @@ class GetShipmentsTest extends TestCase
                         'OrderID'                   => $orderId,
                         'Description'               => $description,
                         'ShippingMethodDescription' => $shippingMethod,
-                        'AmountFC'                  => (float) $totalAmount,
+                        'AmountFC'                  => $totalAmount / 100,
                         'Currency'                  => $currencyCode,
                         'DeliveryAddress'           => $faker->uuid,
                         'SalesOrderLines'           => [
                             'results' => [
                                 [
-                                    'AmountFC'        => (float) $totalAmount,
+                                    'AmountFC'        => $totalAmount / 100,
                                     'Description'     => $itemDescription,
                                     'ItemDescription' => $faker->text,
                                     'Quantity'        => (float) $quantity,

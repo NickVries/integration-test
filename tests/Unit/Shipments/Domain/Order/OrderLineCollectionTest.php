@@ -39,7 +39,7 @@ class OrderLineCollectionTest extends TestCase
 
         $collection = new OrderLineCollection([
             Mockery::mock(OrderLine::class, [
-                'getAmountFC'        => (float) $amount,
+                'getAmountFC'        => $amount / 100,
                 'getDescription'     => $description,
                 'getItemDescription' => $itemDescription,
                 'getQuantity'        => (float) $quantity,

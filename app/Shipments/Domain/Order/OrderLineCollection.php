@@ -17,7 +17,7 @@ class OrderLineCollection extends Collection
                 'description' => $orderLine->getDescription(),
                 'image_url'   => $orderLine->getItem()->getPictureUrl(),
                 'item_value'  => array_filter([
-                    'amount'   => $orderLine->getAmountFC(),
+                    'amount'   => (int) ($orderLine->getAmountFC() * 100),
                     'currency' => $orderCurrency,
                 ]),
                 'quantity'    => (int) $orderLine->getQuantity(),

@@ -33,11 +33,11 @@ class Order
                 'customer_reference'  => $this->orderId,
                 'channel'             => $channel,
                 'total_value'         => array_filter([
-                    'amount'   => (int) $this->amountFC,
+                    'amount'   => (int) ($this->amountFC * 100),
                     'currency' => $this->currency,
                 ]),
                 'price'               => array_filter([
-                    'amount'   => (int) $this->amountFC,
+                    'amount'   => (int) ($this->amountFC * 100),
                     'currency' => $this->currency,
                 ]),
                 'physical_properties' => array_filter([

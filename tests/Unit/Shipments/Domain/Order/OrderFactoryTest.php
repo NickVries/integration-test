@@ -42,7 +42,7 @@ class OrderFactoryTest extends TestCase
             $this->addressesGatewayMock(),
             $this->orderLineFactoryMock(
                 $this->orderLineMock(
-                    (float) $orderLineAmount,
+                    $orderLineAmount / 100,
                     $orderLineDescription,
                     $orderLineItemDescription,
                     (float) $orderLineQuantity,
@@ -55,13 +55,13 @@ class OrderFactoryTest extends TestCase
             'OrderID'                   => $orderId,
             'Description'               => $orderDescription,
             'ShippingMethodDescription' => $orderShippingMethodDescription,
-            'AmountFC'                  => (float) $orderAmount,
+            'AmountFC'                  => $orderAmount / 100,
             'Currency'                  => $orderCurrencyCode,
             'DeliveryAddress'           => $faker->uuid,
             'SalesOrderLines'           => [
                 'results' => [
                     [
-                        'AmountFC'        => (float) $orderLineAmount,
+                        'AmountFC'        => $orderLineAmount / 100,
                         'Description'     => $orderLineDescription,
                         'ItemDescription' => $orderLineItemDescription,
                         'Quantity'        => $orderLineQuantity,
