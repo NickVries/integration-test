@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 return [
 
     /*
@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 

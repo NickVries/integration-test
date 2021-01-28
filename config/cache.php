@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 use Illuminate\Support\Str;
 
 return [
@@ -75,7 +75,7 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'cache',
+            'connection' => 'default',
             'lock_connection' => 'default',
         ],
 
