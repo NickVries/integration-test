@@ -2,11 +2,11 @@
 set -eo pipefail
 
 function fixPermissions {
-  ${COMPOSE} run --rm integration-exact-online chown -R www-data:www-data ./storage/ ./bootstrap/cache/
+  ${COMPOSE} run --rm integration-exact chown -R www-data:www-data ./storage/ ./bootstrap/cache/
 }
 
 function ownAllTheThings {
-  ${COMPOSE} run --rm integration-exact-online chown -R $(id -u):$(id -g) .
+  ${COMPOSE} run --rm integration-exact chown -R $(id -u):$(id -g) .
 }
 
 function createMicronet {
@@ -45,19 +45,19 @@ if [ $# -gt 0 ]; then
     ${COMPOSE} up -d
 
     echo ""
-    echo "integration-exact-online server running on http://localhost:${APP_PORT}"
+    echo "integration-exact server running on http://localhost:${APP_PORT}"
 
-  # Run a composer command on the integration-exact-online service.
+  # Run a composer command on the integration-exact service.
   elif [ "$1" == "composer" ]; then
     shift 1
-    ${COMPOSE} run --rm integration-exact-online composer "$@"
+    ${COMPOSE} run --rm integration-exact composer "$@"
     ownAllTheThings
     fixPermissions
 
-  # Run an artisan command on the integration-exact-online service.
+  # Run an artisan command on the integration-exact service.
   elif [ "$1" == "artisan" ]; then
     shift 1
-    ${COMPOSE} run --rm integration-exact-online php artisan "$@"
+    ${COMPOSE} run --rm integration-exact php artisan "$@"
     ownAllTheThings
     fixPermissions
 
@@ -67,11 +67,11 @@ if [ $# -gt 0 ]; then
     if [ "$IGNORE_TESTS" == "true" ]; then
       exit 0
     else
-      ${COMPOSE} run --rm integration-exact-online ./vendor/bin/phpunit "$@"
+      ${COMPOSE} run --rm integration-exact ./vendor/bin/phpunit "$@"
     fi
 
   # Execute a command on a service.
-  elif [ "$1" == "integration-exact-online" ]; then
+  elif [ "$1" == "integration-exact" ]; then
     ${COMPOSE} run --rm "$@"
 
   # Setup the application.
@@ -87,7 +87,7 @@ if [ $# -gt 0 ]; then
     echo "Installing Composer dependencies..."
     ownAllTheThings
     # first make sure the cache is writable
-    ./mp.sh integration-exact-online chmod 777 /.composer/cache
+    ./mp.sh integration-exact chmod 777 /.composer/cache
     ./mp.sh composer install
 
     # Making directories writable for www-data.
