@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  integration-exact-online:
+  integration-exact:
     build:
       context: .
       dockerfile: docker/app/Dockerfile
       args:
         REGISTRY: ${REGISTRY}
-    image: myparcelcom/integration-exact-online:v1-dev
+    image: myparcelcom/integration-exact:v1-dev
     working_dir: /opt/app
     environment:
       - LOG_LEVEL=$LOG_LEVEL
