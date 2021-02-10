@@ -81,7 +81,7 @@ class OrderFactoryTest extends TestCase
         self::assertEquals([
             'type'          => 'shipments',
             'attributes'    => [
-                'created_at'          => $createdAt,
+                'created_at'          => (int) ($createdAt / 1000),
                 'description'         => $orderDescription,
                 'customer_reference'  => $orderId,
                 'channel'             => 'test',

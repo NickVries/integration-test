@@ -172,7 +172,7 @@ class GetShipmentsTest extends TestCase
                             'phone_number'  => $phoneNumber,
                         ],
                         'description'         => $description,
-                        'created_at'          => $createdAt,
+                        'created_at'          => (int) ($createdAt / 1000),
                         'customer_reference'  => $orderId,
                         'channel'             => 'test',
                         'total_value'         => [
