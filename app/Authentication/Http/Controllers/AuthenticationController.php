@@ -44,6 +44,7 @@ class AuthenticationController extends Controller
         $payload = $authorizationSession->fetch($sessionToken);
 
         $token = Token::findOrCreate($payload['shop_id']);
+        $token->nullify();
         $token->fill($authServer->requestAccessToken(
             $request->code(),
             config('exact.auth.redirect_uri') . "?session_token=${sessionToken}")

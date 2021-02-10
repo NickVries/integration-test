@@ -6,6 +6,7 @@ namespace App\Shipments\Domain\Order;
 
 use App\Authentication\Domain\ShopId;
 use App\Shipments\Domain\Address\Address;
+use DateTimeInterface;
 use JetBrains\PhpStorm\Immutable;
 use function array_filter;
 
@@ -20,6 +21,7 @@ class Order
         private ?string $currency,
         private Address $deliveryAddress,
         private OrderLineCollection $orderLines,
+        private ?DateTimeInterface $createdAt
     ) {
     }
 
@@ -28,6 +30,7 @@ class Order
         return [
             'type'          => 'shipments',
             'attributes'    => array_filter([
+                'created_at'          => $this->createdAt ? $this->createdAt->getTimestamp() : null,
                 'recipient_address'   => $this->deliveryAddress->toJsonApiArray(),
                 'description'         => $this->description,
                 'customer_reference'  => $this->orderId,

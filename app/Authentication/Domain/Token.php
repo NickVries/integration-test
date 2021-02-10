@@ -1,5 +1,6 @@
 <?php
 /** @noinspection TraitsPropertiesConflictsInspection */
+
 /** @noinspection PhpMissingFieldTypeInspection */
 
 declare(strict_types=1);
@@ -16,12 +17,12 @@ use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\Pure;
 
 /**
- * @property ShopId    shop_id
- * @property string    access_token
- * @property string    refresh_token
- * @property ExpiresIn expires_in
- * @property ExpiresAt expires_at
- * @property string    token_type
+ * @property ShopId|null    shop_id
+ * @property string|null    access_token
+ * @property string|null    refresh_token
+ * @property ExpiresIn|null expires_in
+ * @property ExpiresAt|null expires_at
+ * @property string|null    token_type
  */
 class Token extends Model
 {
@@ -129,5 +130,19 @@ class Token extends Model
                 $token->expires_at = $token->expires_in->toExpiresAt();
             }
         });
+    }
+
+    /**
+     * Make sure that all attributes are empty
+     */
+    public function nullify(): void
+    {
+        $this->fill([
+            'access_token'  => null,
+            'refresh_token' => null,
+            'token_type'    => null,
+            'expires_in'    => null,
+            'expires_at'    => null,
+        ]);
     }
 }

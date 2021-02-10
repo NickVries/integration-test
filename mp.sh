@@ -67,7 +67,7 @@ if [ $# -gt 0 ]; then
     if [ "$IGNORE_TESTS" == "true" ]; then
       exit 0
     else
-      ${COMPOSE} run --rm integration-exact ./vendor/bin/phpunit "$@"
+      ${COMPOSE} run --rm integration-exact php artisan test "$@"
     fi
 
   # Execute a command on a service.

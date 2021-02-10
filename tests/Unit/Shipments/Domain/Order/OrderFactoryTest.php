@@ -26,6 +26,7 @@ class OrderFactoryTest extends TestCase
 
         $orderDescription = $faker->text;
         $orderId = $faker->uuid;
+        $createdAt = $faker->unixTime;
         $orderAmount = random_int(1, 1000);
         $orderCurrencyCode = $faker->currencyCode;
         $orderShippingMethodDescription = $faker->word;
@@ -53,6 +54,7 @@ class OrderFactoryTest extends TestCase
 
         $order = $factory->createFromArray([
             'OrderID'                   => $orderId,
+            'Created'                   => "/Date(${createdAt})/",
             'Description'               => $orderDescription,
             'ShippingMethodDescription' => $orderShippingMethodDescription,
             'AmountFC'                  => $orderAmount / 100,
@@ -79,6 +81,7 @@ class OrderFactoryTest extends TestCase
         self::assertEquals([
             'type'          => 'shipments',
             'attributes'    => [
+                'created_at'          => $createdAt,
                 'description'         => $orderDescription,
                 'customer_reference'  => $orderId,
                 'channel'             => 'test',
@@ -139,6 +142,7 @@ class OrderFactoryTest extends TestCase
 
         $order = $factory->createFromArray([
             'OrderID'                   => null,
+            'Created'                   => null,
             'Description'               => null,
             'ShippingMethodDescription' => null,
             'AmountFC'                  => null,
