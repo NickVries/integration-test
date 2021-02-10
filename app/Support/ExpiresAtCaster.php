@@ -9,14 +9,15 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\Pure;
+use function is_null;
 
 class ExpiresAtCaster implements CastsAttributes
 {
     #[Pure]
     public function get(
         $model, string $key, $value, array $attributes
-    ): ExpiresAt {
-        return new ExpiresAt(new Carbon($value));
+    ): ?ExpiresAt {
+        return is_null($value) ? null : new ExpiresAt(new Carbon($value));
     }
 
     /**
@@ -24,11 +25,11 @@ class ExpiresAtCaster implements CastsAttributes
      * @param string    $key
      * @param ExpiresAt $value
      * @param array     $attributes
-     * @return mixed
+     * @return string|null
      */
     public function set(
         $model, string $key, $value, array $attributes
-    ): string {
-        return $value->toDateTimeString();
+    ): ?string {
+        return is_null($value) ? null : $value->toDateTimeString();
     }
 }

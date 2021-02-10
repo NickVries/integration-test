@@ -8,14 +8,15 @@ use App\Authentication\Domain\TokenType;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\Pure;
+use function is_null;
 
 class TokenTypeCaster implements CastsAttributes
 {
     #[Pure]
     public function get(
         $model, string $key, $value, array $attributes
-    ): TokenType {
-        return new TokenType((string) $value);
+    ): ?TokenType {
+        return is_null($value) ? null : new TokenType((string) $value);
     }
 
     /**
@@ -23,11 +24,11 @@ class TokenTypeCaster implements CastsAttributes
      * @param string    $key
      * @param TokenType $value
      * @param array     $attributes
-     * @return mixed
+     * @return string|null
      */
     #[Pure]
-    public function set($model, string $key, $value, array $attributes): string
+    public function set($model, string $key, $value, array $attributes): ?string
     {
-        return (string) $value->getValue();
+        return is_null($value) ? null : (string) $value->getValue();
     }
 }
