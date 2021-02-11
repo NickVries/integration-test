@@ -52,9 +52,11 @@ class OrderFactoryTest extends TestCase
             )
         );
 
+        $responseCreatedTimestamp = $createdAt * 1000;
+
         $order = $factory->createFromArray([
             'OrderID'                   => $orderId,
-            'Created'                   => "/Date(${createdAt})/",
+            'Created'                   => "/Date(${responseCreatedTimestamp})/",
             'Description'               => $orderDescription,
             'ShippingMethodDescription' => $orderShippingMethodDescription,
             'AmountFC'                  => $orderAmount / 100,
@@ -81,7 +83,7 @@ class OrderFactoryTest extends TestCase
         self::assertEquals([
             'type'          => 'shipments',
             'attributes'    => [
-                'created_at'          => (int) ($createdAt / 1000),
+                'created_at'          => $createdAt,
                 'description'         => $orderDescription,
                 'customer_reference'  => $orderId,
                 'channel'             => 'test',
