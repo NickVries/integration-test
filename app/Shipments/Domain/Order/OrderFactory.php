@@ -61,8 +61,7 @@ class OrderFactory
         $createdAt = null;
 
         if (preg_match('/^\/Date\((?P<timestamp>\d+?)\)\/$/', $createdDate, $matches)) {
-            // We have to divide the timestamp by 1000 to get the timestamp in seconds instead of milliseconds.
-            $createdAt = Carbon::createFromTimestampMs((int) ($matches['timestamp']));
+            $createdAt = Carbon::createFromTimestampMs($matches['timestamp']);
         }
 
         return $createdAt;
