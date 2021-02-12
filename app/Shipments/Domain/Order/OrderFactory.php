@@ -61,7 +61,7 @@ class OrderFactory
         $createdAt = null;
 
         if (preg_match('/^\/Date\((?P<timestamp>\d+?)\)\/$/', $createdDate, $matches)) {
-            $createdAt = Carbon::createFromTimestamp((int) $matches['timestamp']);
+            $createdAt = Carbon::createFromTimestampMs($matches['timestamp']);
         }
 
         return $createdAt;

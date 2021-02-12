@@ -52,9 +52,11 @@ class OrderFactoryTest extends TestCase
             )
         );
 
+        $responseCreatedTimestamp = $createdAt * 1000;
+
         $order = $factory->createFromArray([
             'OrderID'                   => $orderId,
-            'Created'                   => "/Date(${createdAt})/",
+            'Created'                   => "/Date(${responseCreatedTimestamp})/",
             'Description'               => $orderDescription,
             'ShippingMethodDescription' => $orderShippingMethodDescription,
             'AmountFC'                  => $orderAmount / 100,
