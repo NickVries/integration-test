@@ -71,13 +71,14 @@ class GetShipmentsTest extends TestCase
         $quantity = random_int(1, 10);
         $itemDescription = $faker->text;
         $createdAt = $faker->unixTime;
+        $responseCreatedAt = $createdAt * 1000;
 
         $salesOrdersResponse = new Response(200, [], json_encode([
             'd' => [
                 'results' => [
                     [
                         'OrderID'                   => $orderId,
-                        'Created'                   => "/Date(${createdAt})/",
+                        'Created'                   => "/Date(${responseCreatedAt})/",
                         'Description'               => $description,
                         'ShippingMethodDescription' => $shippingMethod,
                         'AmountFC'                  => $totalAmount / 100,
