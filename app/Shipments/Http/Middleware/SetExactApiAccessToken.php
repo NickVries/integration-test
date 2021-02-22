@@ -8,6 +8,7 @@ use App\Authentication\Domain\AuthServerInterface;
 use App\Authentication\Domain\ShopId;
 use App\Authentication\Domain\Token;
 use App\Http\ExactApiClient;
+use App\Http\ExactApiDivisionClient;
 use Closure;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,9 @@ use function response;
 
 class SetExactApiAccessToken
 {
-    public function __construct(private Container $container)
+    public function __construct(
+        private Container $container
+    )
     {
     }
 
@@ -42,8 +45,8 @@ class SetExactApiAccessToken
         }
 
         $this->container->singleton(
-            ExactApiClient::class,
-            fn(Container $container) => $this->createClient($token, $container)
+            ExactApiDivisionClient::class,
+            fn(Container $container) => $this->createApiDivisionClient($token, $container)
         );
 
         $this->container->singleton(ShopId::class, fn() => $shopId);
@@ -90,11 +93,13 @@ class SetExactApiAccessToken
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    private function createClient(Token $token, Container $container): ExactApiClient
+    private function createApiDivisionClient(Token $token, Container $container): ExactApiDivisionClient
     {
         $accessToken = $token->obtainAccessToken($container->get(AuthServerInterface::class));
         $token->save();
 
-        return new ExactApiClient($accessToken);
+        $apiClient = new ExactApiClient($accessToken);
+
+        return new ExactApiDivisionClient($accessToken, (string) $apiClient->getDivision());
     }
 }

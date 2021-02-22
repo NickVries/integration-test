@@ -14,7 +14,7 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
-        "jonahgeorge/jaeger-client-php": "^0.3.0",
+        "jonahgeorge/jaeger-client-php": "^1.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "myclabs/php-enum": "^1.7",
