@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Item;
 
-use App\Http\ExactApiClient;
+use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\Item\Item;
 use App\Shipments\Domain\Item\ItemFactory;
 use App\Shipments\Domain\Item\ItemsGateway;
@@ -23,7 +23,7 @@ class ItemsGatewayTest extends TestCase
     public function test_should_get_cached_item_object(): void
     {
         $itemMock = Mockery::mock(Item::class);
-        $clientMock = Mockery::mock(ExactApiClient::class);
+        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
         $responseMock = Mockery::mock(ResponseInterface::class);
         $responseMock->shouldReceive('getBody')->once()->andReturn(Utils::jsonEncode([]));
         $clientMock->shouldReceive('get')->once()->andReturn($responseMock);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Order;
 
-use App\Http\ExactApiClient;
+use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\MakeRequest;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,7 +25,7 @@ class OrdersGateway
     private const FILTER_DATE_FIELD = 'Created';
 
     public function __construct(
-        private ExactApiClient $client,
+        private ExactApiDivisionClient $client,
         private OrderFactory $orderFactory
     ) {
     }

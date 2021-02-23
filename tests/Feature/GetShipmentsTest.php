@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Authentication\Domain\ExpiresAt;
 use App\Authentication\Domain\Token;
 use App\Http\ExactApiClient;
+use App\Http\ExactApiDivisionClient;
 use Carbon\Carbon;
 use Faker\Factory;
 use GuzzleHttp\Handler\MockHandler;
@@ -18,6 +19,30 @@ use function random_int;
 
 class GetShipmentsTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        ExactApiClient::setHandler(HandlerStack::create(new MockHandler([
+            new Response(200, [], json_encode([
+                'd' => [
+                    'results' => [
+                        [
+                            'CurrentDivision' => '123'
+                        ]
+                    ]
+                ]
+            ], JSON_THROW_ON_ERROR)),
+        ])));
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        ExactApiClient::setHandler(null);
+        ExactApiDivisionClient::setHandler(null);
+    }
+
     public function test_should_get_400_bad_request_when_shop_id_is_missing(): void
     {
         $response = $this->get('/shipments');
@@ -43,7 +68,7 @@ class GetShipmentsTest extends TestCase
     {
         $token = $this->createActiveToken();
 
-        ExactApiClient::setHandler(HandlerStack::create(new MockHandler([
+        ExactApiDivisionClient::setHandler(HandlerStack::create(new MockHandler([
             new Response(200, [], json_encode([])),
         ])));
 
@@ -136,7 +161,7 @@ class GetShipmentsTest extends TestCase
             ],
         ], JSON_THROW_ON_ERROR));
 
-        ExactApiClient::setHandler(
+        ExactApiDivisionClient::setHandler(
             HandlerStack::create(
                 new MockHandler([
                     $salesOrdersResponse,

@@ -43,7 +43,6 @@ class AuthenticationTest extends TestCase
             ]),
             $faker->uuid,
             $faker->password,
-            $faker->url,
         ));
 
         $shopId = $faker->uuid;
@@ -86,7 +85,6 @@ class AuthenticationTest extends TestCase
             $clientMock,
             $faker->uuid,
             $faker->password,
-            $faker->url,
         ));
         $this->app->singleton(AuthorizationSession::class, fn() => Mockery::mock(AuthorizationSession::class, [
             'fetch' => [
@@ -139,7 +137,6 @@ class AuthenticationTest extends TestCase
             $clientMock,
             $faker->uuid,
             $faker->password,
-            $faker->url,
         ));
         $this->app->singleton(AuthorizationSession::class, fn() => Mockery::mock(AuthorizationSession::class, [
             'fetch' => [
