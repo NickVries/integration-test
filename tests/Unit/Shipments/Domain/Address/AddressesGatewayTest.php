@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Address;
 
-use App\Http\ExactApiClient;
+use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\Address\Address;
 use App\Shipments\Domain\Address\AddressesGateway;
 use App\Shipments\Domain\Address\AddressFactory;
@@ -24,7 +24,7 @@ class AddressesGatewayTest extends TestCase
     public function test_should_get_cached_address_object(): void
     {
         $addressMock = Mockery::mock(Address::class);
-        $clientMock = Mockery::mock(ExactApiClient::class);
+        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
         $responseMock = Mockery::mock(ResponseInterface::class);
         $responseMock->shouldReceive('getBody')->once()->andReturn(Utils::jsonEncode([]));
         $clientMock->shouldReceive('get')->once()->andReturn($responseMock);
