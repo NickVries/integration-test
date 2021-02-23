@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Address;
 
-use JetBrains\PhpStorm\ArrayShape;
 use VIISON\AddressSplitter\AddressSplitter;
+use VIISON\AddressSplitter\Exceptions\SplittingException;
 
 class AddressLine
 {
-    #[ArrayShape([
-        'streetName'       => 'string',
-        'houseNumberParts' => 'array',
-    ])]
-    private array $split;
+    private array $split = [
+        'streetName'       => '',
+        'houseNumberParts' => [
+            'base'      => '',
+            'extension' => '',
+        ],
+    ];
 
     public function __construct(private string $addressLine)
     {
-        $this->split = AddressSplitter::splitAddress($this->addressLine);
+        try {
+            $this->split = AddressSplitter::splitAddress($this->addressLine);
+        } catch (SplittingException $exception) {
+            $this->split['streetName'] = $this->addressLine;
+        }
     }
 
     public function getStreet(): string
