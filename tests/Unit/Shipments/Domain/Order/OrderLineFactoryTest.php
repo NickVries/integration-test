@@ -31,7 +31,7 @@ class OrderLineFactoryTest extends TestCase
             ])
         );
 
-        $amount = (float) random_int(1, 1000);
+        $amount = (float) random_int(1000, 9000);
         $quantity = (float) random_int(1, 100);
         $description = $faker->text;
         $itemDescription = $faker->text;

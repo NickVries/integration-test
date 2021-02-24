@@ -11,7 +11,7 @@ use function array_filter;
 class Address
 {
     public function __construct(
-        private ContactName $contactName,
+        private FullName $contactName,
         private ?string $country,
         private ?string $postcode,
         private ?string $state,
