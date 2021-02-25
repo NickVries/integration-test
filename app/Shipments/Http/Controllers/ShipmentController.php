@@ -29,7 +29,7 @@ class ShipmentController
         ShopId $shopId,
         ShipmentRequest $request
     ): JsonResponse {
-        $orders = $ordersGateway->fetchByDateRange($request->startDate(), $request->endDate());
+        $orders = $ordersGateway->fetchByDateRange($request->shopId(), $request->startDate(), $request->endDate());
 
         return response()->json([
             'data' => array_map($this->transformer($shopId), $orders)

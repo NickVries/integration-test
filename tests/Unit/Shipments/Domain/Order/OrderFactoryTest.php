@@ -7,6 +7,7 @@ namespace Tests\Unit\Shipments\Domain\Order;
 use App\Authentication\Domain\ShopId;
 use App\Shipments\Domain\Address\Address;
 use App\Shipments\Domain\Address\AddressesGateway;
+use App\Shipments\Domain\Address\FullName;
 use App\Shipments\Domain\Item\Item;
 use App\Shipments\Domain\Item\Weight;
 use App\Shipments\Domain\Order\OrderFactory;
@@ -20,6 +21,12 @@ use function random_int;
 
 class OrderFactoryTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+
     public function test_should_create_order_from_array(): void
     {
         $faker = Factory::create();
@@ -27,11 +34,11 @@ class OrderFactoryTest extends TestCase
         $orderDescription = $faker->text;
         $orderId = $faker->uuid;
         $createdAt = $faker->unixTime;
-        $orderAmount = random_int(1, 1000);
+        $orderAmount = random_int(1000, 9000);
         $orderCurrencyCode = $faker->currencyCode;
         $orderShippingMethodDescription = $faker->word;
 
-        $orderLineAmount = random_int(1, 1000);
+        $orderLineAmount = random_int(1000, 9000);
         $orderLineDescription = $faker->text;
         $orderLineItemDescription = $faker->text;
         $orderLineQuantity = random_int(1, 10);
@@ -39,8 +46,12 @@ class OrderFactoryTest extends TestCase
         $itemWeight = random_int(1, 100);
         $itemPictureUrl = $faker->imageUrl();
 
+        $addressMock = Mockery::mock(Address::class, [
+            'toJsonApiArray' => []
+        ]);
+
         $factory = new OrderFactory(
-            $this->addressesGatewayMock(),
+            $this->addressesGatewayMock($addressMock),
             $this->orderLineFactoryMock(
                 $this->orderLineMock(
                     $orderLineAmount / 100,
@@ -55,14 +66,14 @@ class OrderFactoryTest extends TestCase
         $responseCreatedTimestamp = $createdAt * 1000;
 
         $order = $factory->createFromArray([
-            'OrderID'                   => $orderId,
-            'Created'                   => "/Date(${responseCreatedTimestamp})/",
-            'Description'               => $orderDescription,
-            'ShippingMethodDescription' => $orderShippingMethodDescription,
-            'AmountFC'                  => $orderAmount / 100,
-            'Currency'                  => $orderCurrencyCode,
-            'DeliveryAddress'           => $faker->uuid,
-            'SalesOrderLines'           => [
+            'OrderID'                        => $orderId,
+            'Created'                        => "/Date(${responseCreatedTimestamp})/",
+            'Description'                    => $orderDescription,
+            'ShippingMethodDescription'      => $orderShippingMethodDescription,
+            'AmountFC'                       => $orderAmount / 100,
+            'Currency'                       => $orderCurrencyCode,
+            'DeliveryAddress'                => $faker->uuid,
+            'SalesOrderLines'                => [
                 'results' => [
                     [
                         'AmountFC'        => $orderLineAmount / 100,
@@ -125,12 +136,60 @@ class OrderFactoryTest extends TestCase
         ], $order->toJsonApiArray($shopIdMock, 'test'));
     }
 
+    private function addressesGatewayMock(Address $addressMock): AddressesGateway|MockInterface
+    {
+        return Mockery::mock(AddressesGateway::class, [
+            'fetchOneByAddressId' => $addressMock,
+        ]);
+    }
+
+    private function orderLineFactoryMock(MockInterface|OrderLine $orderLineMock): OrderLineFactory|MockInterface
+    {
+        return Mockery::mock(OrderLineFactory::class, [
+            'createFromArray' => $orderLineMock,
+        ]);
+    }
+
+    private function orderLineMock(
+        ?float $orderLineAmount,
+        ?string $orderLineDescription,
+        ?string $orderLineItemDescription,
+        ?float $orderLineQuantity,
+        MockInterface|Item $itemMock
+    ): OrderLine|MockInterface {
+        return Mockery::mock(OrderLine::class, [
+            'getAmountFC'        => $orderLineAmount,
+            'getDescription'     => $orderLineDescription,
+            'getItemDescription' => $orderLineItemDescription,
+            'getQuantity'        => $orderLineQuantity,
+            'getItem'            => $itemMock,
+        ]);
+    }
+
+    private function itemMock(MockInterface|Weight $weightMock, ?string $itemPictureUrl): Item|MockInterface
+    {
+        return Mockery::mock(Item::class, [
+            'getDescription' => Factory::create()->text,
+            'getWeight'      => $weightMock,
+            'getPictureUrl'  => $itemPictureUrl,
+        ]);
+    }
+
+    private function weightMock(?int $itemWeight): Weight|MockInterface
+    {
+        return Mockery::mock(Weight::class, [
+            'toGrams' => (int) $itemWeight,
+        ]);
+    }
+
     public function test_should_create_order_from_array_with_nulls(): void
     {
         $faker = Factory::create();
 
         $factory = new OrderFactory(
-            $this->addressesGatewayMock(),
+            $this->addressesGatewayMock(Mockery::mock(Address::class, [
+                'toJsonApiArray' => [],
+            ])),
             $this->orderLineFactoryMock(
                 $this->orderLineMock(
                     null,
@@ -182,53 +241,5 @@ class OrderFactoryTest extends TestCase
                 ],
             ],
         ], $order->toJsonApiArray($shopIdMock, 'test'));
-    }
-
-    private function addressesGatewayMock(): AddressesGateway|MockInterface
-    {
-        return Mockery::mock(AddressesGateway::class, [
-            'fetchOneByAddressId' => Mockery::mock(Address::class, [
-                'toJsonApiArray' => [],
-            ]),
-        ]);
-    }
-
-    private function weightMock(?int $itemWeight): Weight|MockInterface
-    {
-        return Mockery::mock(Weight::class, [
-            'toGrams' => (int) $itemWeight,
-        ]);
-    }
-
-    private function itemMock(MockInterface|Weight $weightMock, ?string $itemPictureUrl): Item|MockInterface
-    {
-        return Mockery::mock(Item::class, [
-            'getDescription' => Factory::create()->text,
-            'getWeight'      => $weightMock,
-            'getPictureUrl'  => $itemPictureUrl,
-        ]);
-    }
-
-    private function orderLineMock(
-        ?float $orderLineAmount,
-        ?string $orderLineDescription,
-        ?string $orderLineItemDescription,
-        ?float $orderLineQuantity,
-        MockInterface|Item $itemMock
-    ): OrderLine|MockInterface {
-        return Mockery::mock(OrderLine::class, [
-            'getAmountFC'        => $orderLineAmount,
-            'getDescription'     => $orderLineDescription,
-            'getItemDescription' => $orderLineItemDescription,
-            'getQuantity'        => $orderLineQuantity,
-            'getItem'            => $itemMock,
-        ]);
-    }
-
-    private function orderLineFactoryMock(MockInterface|OrderLine $orderLineMock): OrderLineFactory|MockInterface
-    {
-        return Mockery::mock(OrderLineFactory::class, [
-            'createFromArray' => $orderLineMock,
-        ]);
     }
 }

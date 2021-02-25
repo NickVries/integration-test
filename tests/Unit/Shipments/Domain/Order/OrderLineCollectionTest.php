@@ -19,7 +19,7 @@ class OrderLineCollectionTest extends TestCase
     {
         $faker = Factory::create();
 
-        $amount = random_int(1, 1000);
+        $amount = random_int(1000, 9000);
         $description = $faker->text;
         $itemDescription = $faker->text;
         $quantity = random_int(1, 1000);

@@ -2,8 +2,10 @@
 
 namespace App\Shipments\Http\Requests;
 
+use App\Authentication\Domain\ShopId;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Ramsey\Uuid\Uuid;
 
 class ShipmentRequest extends FormRequest
 {
@@ -30,5 +32,10 @@ class ShipmentRequest extends FormRequest
     public function endDate(): Carbon
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->input('filter.end_date') . ' 23:59:59');
+    }
+
+    public function shopId(): ShopId
+    {
+        return new ShopId(Uuid::fromString($this->query('shop_id')));
     }
 }

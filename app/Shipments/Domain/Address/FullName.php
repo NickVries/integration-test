@@ -5,14 +5,19 @@ declare(strict_types=1);
 namespace App\Shipments\Domain\Address;
 
 use Illuminate\Support\Arr;
+use JetBrains\PhpStorm\Pure;
 use function preg_match;
 
-class ContactName
+class FullName
 {
     private const NAMES_PATTERN = '/^(?P<first_name>.+?)\s(?P<last_name>.+?)$/';
 
-    public function __construct(private string $contactName)
+    private string $name;
+
+    #[Pure]
+    public function __construct(string $name)
     {
+        $this->name = trim($name);
     }
 
     public function getFirstName(): string
@@ -27,7 +32,12 @@ class ContactName
 
     private function extract(string $key): string
     {
-        preg_match(self::NAMES_PATTERN, $this->contactName, $matches);
-        return (string) Arr::get($matches, $key, $this->contactName);
+        preg_match(self::NAMES_PATTERN, $this->name, $matches);
+        return trim((string) Arr::get($matches, $key, $this->name));
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->name);
     }
 }
