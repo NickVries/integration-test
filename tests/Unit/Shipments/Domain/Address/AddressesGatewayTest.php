@@ -14,6 +14,7 @@ use GuzzleHttp\Utils;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\SimpleCache\CacheInterface;
 use Ramsey\Uuid\UuidInterface;
 
 class AddressesGatewayTest extends TestCase
@@ -21,7 +22,7 @@ class AddressesGatewayTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    public function test_should_get_cached_address_object(): void
+    public function test_should_get_fresh_address_object(): void
     {
         $addressMock = Mockery::mock(Address::class);
         $clientMock = Mockery::mock(ExactApiDivisionClient::class);
@@ -32,7 +33,28 @@ class AddressesGatewayTest extends TestCase
             'createFromArray' => $addressMock,
         ]);
 
-        $gateway = new AddressesGateway($clientMock, $addressFactoryMock);
+        $gateway = new AddressesGateway($clientMock, $addressFactoryMock, Mockery::mock(CacheInterface::class, [
+            'has' => false,
+            'set' => null,
+        ]));
+
+        $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
+
+        $address = $gateway->fetchOneByAddressId($uuidMock);
+
+        self::assertSame($addressMock, $address);
+    }
+
+    public function test_should_get_cached_address_object(): void
+    {
+        $addressMock = Mockery::mock(Address::class);
+        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
+        $addressFactoryMock = Mockery::mock(AddressFactory::class);
+
+        $gateway = new AddressesGateway($clientMock, $addressFactoryMock, Mockery::mock(CacheInterface::class, [
+            'has' => true,
+            'get' => $addressMock,
+        ]));
 
         $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
 

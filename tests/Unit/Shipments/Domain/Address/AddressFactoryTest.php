@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit\Shipments\Domain\Address;
 
 use App\Shipments\Domain\Address\AddressFactory;
+use App\Shipments\Domain\Address\FullName;
 use Faker\Factory;
 use Illuminate\Support\Str;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use function random_int;
 use function strtoupper;

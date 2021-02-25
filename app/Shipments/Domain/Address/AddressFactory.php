@@ -24,7 +24,7 @@ class AddressFactory
         array $address
     ): Address {
         return new Address(
-            $address['ContactName'] ? new ContactName($address['ContactName']) : new NullContactName(),
+            $address['ContactName'] ? new FullName($address['ContactName']) : new NullFullName(),
             $address['Country'] ?? null,
             $address['Postcode'] ?? null,
             $address['State'] ?? null,

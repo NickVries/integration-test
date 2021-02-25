@@ -9,7 +9,7 @@ class NullAddress extends Address
     public function __construct()
     {
         parent::__construct(
-            new NullContactName(),
+            new NullFullName(),
             '',
             '',
             '',
