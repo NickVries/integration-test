@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class LongRunningMigration extends Migration
 {
@@ -13,7 +11,9 @@ class LongRunningMigration extends Migration
      */
     public function up()
     {
-        sleep(30);
+        if (!app()->environment('testing')) {
+            sleep(30);
+        }
     }
 
     /**
