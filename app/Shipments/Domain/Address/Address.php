@@ -26,6 +26,17 @@ class Address
 
     public function toJsonApiArray(): array
     {
+        $company = trim((string) $this->accountName);
+        $fullName = $this->contactName;
+
+        // in case contact name is unavailable but there is
+        // account name then the account name holds the person's full name
+        // and there is no company set
+        if (!empty($company) && $fullName->isEmpty()) {
+            $fullName = new FullName($company);
+            $company = null;
+        }
+
         return array_filter([
             'street_1'             => $this->addressLine1->getStreet(),
             'street_2'             => trim($this->addressLine2 . ' ' . $this->addressLine3),
@@ -34,9 +45,9 @@ class Address
             'postal_code'          => trim((string) $this->postcode),
             'city'                 => trim((string) $this->city),
             'country_code'         => trim((string) $this->country),
-            'first_name'           => trim($this->contactName->getFirstName()),
-            'last_name'            => trim($this->contactName->getLastName()),
-            'company'              => trim((string) $this->accountName),
+            'first_name'           => $fullName->getFirstName(),
+            'last_name'            => $fullName->getLastName(),
+            'company'              => $company,
             'phone_number'         => trim((string) $this->phone),
         ]);
     }

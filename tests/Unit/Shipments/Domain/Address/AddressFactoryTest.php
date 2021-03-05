@@ -81,4 +81,48 @@ class AddressFactoryTest extends TestCase
 
         self::assertEquals([], $address->toJsonApiArray());
     }
+
+    public function test_should_use_account_name_when_no_contact_name_is_available(): void
+    {
+        $faker = Factory::create();
+
+        $factory = new AddressFactory();
+
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+        $countryCode = $faker->countryCode;
+        $postcode = $faker->postcode;
+        $stateCode = strtoupper(Str::random(2));
+        $streetNumber = random_int(10, 99);
+        $streetName = $faker->streetName;
+        $address2 = $faker->streetAddress;
+        $address3 = $faker->streetAddress;
+        $city = $faker->city;
+        $phoneNumber = $faker->phoneNumber;
+
+        $address = $factory->createFromArray([
+            'Country'      => $countryCode,
+            'Postcode'     => $postcode,
+            'State'        => $stateCode,
+            'AddressLine1' => $streetName . ' ' . $streetNumber . 'A',
+            'AddressLine2' => $address2,
+            'AddressLine3' => $address3,
+            'City'         => $city,
+            'AccountName'  => $firstName . ' ' . $lastName,
+            'Phone'        => $phoneNumber,
+        ]);
+
+        self::assertEquals([
+            'street_1'             => $streetName,
+            'street_2'             => $address2 . ' ' . $address3,
+            'street_number'        => $streetNumber,
+            'street_number_suffix' => 'A',
+            'postal_code'          => $postcode,
+            'city'                 => $city,
+            'country_code'         => $countryCode,
+            'first_name'           => $firstName,
+            'last_name'            => $lastName,
+            'phone_number'         => $phoneNumber,
+        ], $address->toJsonApiArray());
+    }
 }

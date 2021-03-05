@@ -9,6 +9,7 @@ use App\Shipments\Domain\Address\Address;
 use DateTimeInterface;
 use JetBrains\PhpStorm\Immutable;
 use function array_filter;
+use function bcmul;
 
 #[Immutable]
 class Order
@@ -36,11 +37,11 @@ class Order
                 'customer_reference'  => $this->orderId,
                 'channel'             => $channel,
                 'total_value'         => array_filter([
-                    'amount'   => (int) ($this->amountFC * 100),
+                    'amount'   => (int) bcmul((string) $this->amountFC, '100'),
                     'currency' => $this->currency,
                 ]),
                 'price'               => array_filter([
-                    'amount'   => (int) ($this->amountFC * 100),
+                    'amount'   => (int) bcmul((string) $this->amountFC, '100'),
                     'currency' => $this->currency,
                 ]),
                 'physical_properties' => array_filter([
