@@ -15,7 +15,9 @@ class Weight
 
     public static function createFromUnit(?float $weight, ?string $unit): self
     {
-        if ($weight === null || empty($unit)) {
+        $unit = empty($unit) ? Unit::KILOGRAM : $unit;
+
+        if ($weight === null) {
             return new NullWeight();
         }
 

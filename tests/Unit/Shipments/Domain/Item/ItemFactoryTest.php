@@ -22,17 +22,37 @@ class ItemFactoryTest extends TestCase
         $factory = new ItemFactory();
 
         $description = $faker->text;
-        $netWeight = random_int(10, 99);
+        $grossWeight = random_int(10, 99);
         $units = ['kg', 'g'];
         $netWeightUnit = $units[array_rand($units)];
         $pictureUrl = $faker->imageUrl();
 
         $factory->createFromArray([
             'Description'   => $description,
-            'NetWeight'     => $netWeight,
+            'GrossWeight'   => $grossWeight,
             'NetWeightUnit' => $netWeightUnit,
             'PictureUrl'    => $pictureUrl,
         ]);
+    }
+
+    public function test_should_create_item_from_array_without_weight_unit(): void
+    {
+        $faker = Factory::create();
+
+        $factory = new ItemFactory();
+
+        $description = $faker->text;
+        $grossWeight = 20;
+        $pictureUrl = $faker->imageUrl();
+
+        $item = $factory->createFromArray([
+            'Description'   => $description,
+            'GrossWeight'   => $grossWeight,
+            'NetWeightUnit' => null,
+            'PictureUrl'    => $pictureUrl,
+        ]);
+
+        self::assertEquals(20000, $item->getWeight()->toGrams());
     }
 
     public function test_should_create_item_from_array_with_nulls(): void
@@ -41,7 +61,7 @@ class ItemFactoryTest extends TestCase
 
         $item = $factory->createFromArray([
             'Description'   => null,
-            'NetWeight'     => null,
+            'GrossWeight'   => null,
             'NetWeightUnit' => null,
             'PictureUrl'    => null,
         ]);

@@ -12,15 +12,19 @@ class ItemFactory
     public function createFromArray(
         #[ArrayShape([
             'Description'   => 'string',
+            'GrossWeight'   => 'string',
             'NetWeight'     => 'float',
             'NetWeightUnit' => 'string',
             'PictureUrl'    => 'string',
         ])]
         array $item
     ): Item {
+        $netWeight = empty($item['NetWeight']) ? null : (float) $item['NetWeight'];
+        $weight = empty($item['GrossWeight']) ? $netWeight : (float) $item['GrossWeight'];
+
         return new Item(
             (string) $item['Description'],
-            Weight::createFromUnit((float) $item['NetWeight'], (string) $item['NetWeightUnit']),
+            Weight::createFromUnit($weight, (string) $item['NetWeightUnit']),
             $item['PictureUrl'],
         );
     }
