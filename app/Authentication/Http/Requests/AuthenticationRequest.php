@@ -2,9 +2,7 @@
 
 namespace App\Authentication\Http\Requests;
 
-use App\Authentication\Domain\ShopId;
 use Illuminate\Foundation\Http\FormRequest;
-use Ramsey\Uuid\Uuid;
 use function urldecode;
 
 class AuthenticationRequest extends FormRequest

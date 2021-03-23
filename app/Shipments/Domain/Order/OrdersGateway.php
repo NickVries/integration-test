@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Order;
 
-use App\Authentication\Domain\ShopId;
 use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\LoadAndCache;
 use App\Shipments\Domain\MakeRequest;
@@ -12,6 +11,7 @@ use Carbon\Carbon;
 use DateInterval;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
+use MyParcelCom\Integration\ShopId;
 use ODataQuery\Expand\ODataQueryExpand;
 use ODataQuery\Expand\ODataQueryExpandCollection;
 use ODataQuery\Filter\Operators\Logical\ODataAndOperator;

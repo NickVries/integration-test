@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shipments\Http\Middleware;
 
 use App\Authentication\Domain\AuthServerInterface;
-use App\Authentication\Domain\ShopId;
 use App\Authentication\Domain\Token;
 use App\Http\ExactApiClient;
 use App\Http\ExactApiDivisionClient;
@@ -14,6 +13,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 use function response;

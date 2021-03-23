@@ -2,9 +2,9 @@
 
 namespace App\Shipments\Http\Requests;
 
-use App\Authentication\Domain\ShopId;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Uuid;
 
 class ShipmentRequest extends FormRequest

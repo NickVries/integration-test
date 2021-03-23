@@ -10,6 +10,7 @@ use App\Shipments\Domain\Order\OrderLine;
 use App\Shipments\Domain\Order\OrderLineCollection;
 use Faker\Factory;
 use Mockery;
+use MyParcelCom\Integration\Shipment\Items\Item as ShipmentItem;
 use PHPUnit\Framework\TestCase;
 use function random_int;
 
@@ -39,11 +40,19 @@ class OrderLineCollectionTest extends TestCase
 
         $collection = new OrderLineCollection([
             Mockery::mock(OrderLine::class, [
-                'getAmountFC'        => $amount / 100,
-                'getDescription'     => $description,
-                'getItemDescription' => $itemDescription,
-                'getQuantity'        => (float) $quantity,
-                'getItem'            => $itemMock,
+                'toShipmentItem' => Mockery::mock(ShipmentItem::class, [
+                    'toArray' => [
+                        'description' => $description,
+                        'quantity'    => $quantity,
+                        'image_url'   => $pictureUrl,
+                        'item_value'  => [
+                            'amount'   => $amount,
+                            'currency' => $orderCurrency,
+                        ],
+                        'item_weight' => $grams,
+                    ],
+                ]),
+                'getItem'        => $itemMock,
             ]),
         ]);
 
@@ -58,6 +67,6 @@ class OrderLineCollectionTest extends TestCase
                 'quantity'    => $quantity,
                 'item_weight' => $grams,
             ],
-        ], $collection->toJsonApiArray($orderCurrency));
+        ], $collection->toShipmentItems($orderCurrency)->toArray());
     }
 }

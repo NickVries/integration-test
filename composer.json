@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
+        "ext-bcmath": "*",
         "crisu83/php-conversion": "^0.5.2",
         "curiosity26/odataquery": "^1.0",
         "fideloper/proxy": "^4.4",
@@ -19,10 +20,10 @@
         "laravel/tinker": "^2.5",
         "myclabs/php-enum": "^1.7",
         "myparcelcom/concurrency-safe-migrations": "^0.1",
+        "myparcelcom/integration-commons": "dev-master",
         "ramsey/uuid": "^4.1",
         "rollbar/rollbar-laravel": "^7.0",
-        "viison/address-splitter": "^0.3.4",
-        "ext-bcmath": "*"
+        "viison/address-splitter": "^0.3.4"
     },
     "require-dev": {
         "brianium/paratest": "^6.1",
@@ -32,7 +33,7 @@
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-latest"
     },
     "config": {
         "optimize-autoloader": true,

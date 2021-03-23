@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Order;
 
-use App\Authentication\Domain\ShopId;
 use App\Shipments\Domain\Address\Address;
 use DateTimeInterface;
 use JetBrains\PhpStorm\Immutable;
+use MyParcelCom\Integration\Shipment\Items\ItemCollection;
+use MyParcelCom\Integration\Shipment\PhysicalProperties;
+use MyParcelCom\Integration\Shipment\Price;
+use MyParcelCom\Integration\Shipment\Shipment;
+use MyParcelCom\Integration\ShopId;
 use function array_filter;
 use function bcmul;
 
@@ -26,40 +30,22 @@ class Order
     ) {
     }
 
-    public function toJsonApiArray(ShopId $shopId, string $channel): array
+    public function toShipment(ShopId $shopId, string $channel): Shipment
     {
-        return [
-            'type'          => 'shipments',
-            'attributes'    => array_filter([
-                'created_at'          => $this->createdAt ? $this->createdAt->getTimestamp() : null,
-                'recipient_address'   => $this->deliveryAddress->toJsonApiArray(),
-                'description'         => $this->description,
-                'customer_reference'  => $this->orderId,
-                'channel'             => $channel,
-                'total_value'         => array_filter([
-                    'amount'   => (int) bcmul((string) $this->amountFC, '100'),
-                    'currency' => $this->currency,
-                ]),
-                'price'               => array_filter([
-                    'amount'   => (int) bcmul((string) $this->amountFC, '100'),
-                    'currency' => $this->currency,
-                ]),
-                'physical_properties' => array_filter([
-                    'weight' => $this->orderLines->sumWeight(),
-                ]),
-                'items'               => array_filter($this->orderLines->toJsonApiArray($this->currency)),
-                'tags'                => array_filter([
-                    $this->shippingMethodDescription,
-                ]),
-            ]),
-            'relationships' => [
-                'shop' => [
-                    'data' => [
-                        'type' => 'shops',
-                        'id'   => $shopId->toString(),
-                    ],
-                ],
-            ],
-        ];
+        $price = new Price((int) bcmul((string) $this->amountFC, '100'), (string) $this->currency);
+
+        return new Shipment(
+            shopId: $shopId,
+            createdAt: $this->createdAt,
+            recipientAddress: $this->deliveryAddress->toIntegrationAddress(),
+            description: $this->description,
+            customerReference: (string) $this->orderId,
+            channel: $channel,
+            totalValue: $price,
+            price: $price,
+            physicalProperties: new PhysicalProperties($this->orderLines->sumWeight()),
+            items: $this->orderLines->toShipmentItems($this->currency),
+            tags: array_filter([$this->shippingMethodDescription])
+        );
     }
 }

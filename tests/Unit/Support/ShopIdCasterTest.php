@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support;
 
-use App\Authentication\Domain\ShopId;
 use App\Support\ShopIdCaster;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Mockery;
+use MyParcelCom\Integration\ShopId;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 

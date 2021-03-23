@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\Pure;
+use MyParcelCom\Integration\ShopId;
 
 /**
  * @property ShopId|null    shop_id

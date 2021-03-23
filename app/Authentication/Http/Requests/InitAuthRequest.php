@@ -2,9 +2,9 @@
 
 namespace App\Authentication\Http\Requests;
 
-use App\Authentication\Domain\ShopId;
 use App\Rules\UuidRule;
 use Illuminate\Foundation\Http\FormRequest;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Uuid;
 
 class InitAuthRequest extends FormRequest

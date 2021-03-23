@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Shipments\Http\Controllers;
 
-use App\Authentication\Domain\ShopId;
 use App\Shipments\Domain\Order\Order;
 use App\Shipments\Domain\Order\OrdersGateway;
 use App\Shipments\Http\Requests\ShipmentRequest;
 use Closure;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
+use MyParcelCom\Integration\ShopId;
 use function array_map;
 use function config;
 use function response;
@@ -38,6 +38,6 @@ class ShipmentController
 
     private function transformer(ShopId $shopId): Closure
     {
-        return static fn(Order $order) => $order->toJsonApiArray($shopId, config('app.version'));
+        return static fn(Order $order) => $order->toShipment($shopId, config('app.version'))->transformToJsonApiArray();
     }
 }

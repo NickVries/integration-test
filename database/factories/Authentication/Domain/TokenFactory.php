@@ -3,12 +3,12 @@
 namespace Database\Factories\Authentication\Domain;
 
 use App\Authentication\Domain\ExpiresIn;
-use App\Authentication\Domain\ShopId;
 use App\Authentication\Domain\Token;
 use App\Authentication\Domain\TokenType;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Uuid;
 use function random_int;
 
