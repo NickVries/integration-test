@@ -43,7 +43,7 @@ class OrderFactoryTest extends TestCase
         $itemPictureUrl = $faker->imageUrl();
 
         $addressMock = Mockery::mock(Address::class, [
-            'toIntegrationAddress' => Mockery::mock(ShipmentAddress::class, [
+            'toShipmentAddress' => Mockery::mock(ShipmentAddress::class, [
                 'toArray' => [],
             ]),
         ]);
@@ -205,7 +205,7 @@ class OrderFactoryTest extends TestCase
 
         $factory = new OrderFactory(
             $this->addressesGatewayMock(Mockery::mock(Address::class, [
-                'toIntegrationAddress' => Mockery::mock(ShipmentAddress::class, [
+                'toShipmentAddress' => Mockery::mock(ShipmentAddress::class, [
                     'toArray' => [],
                 ]),
             ])),

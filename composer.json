@@ -16,11 +16,11 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "jonahgeorge/jaeger-client-php": "^1.1",
-        "laravel/framework": "^8.12",
+        "laravel/framework": "^8.34",
         "laravel/tinker": "^2.5",
         "myclabs/php-enum": "^1.7",
         "myparcelcom/concurrency-safe-migrations": "^0.1",
-        "myparcelcom/integration-commons": "dev-master",
+        "myparcelcom/integration-commons": "^v0.1",
         "ramsey/uuid": "^4.1",
         "rollbar/rollbar-laravel": "^7.0",
         "viison/address-splitter": "^0.3.4"

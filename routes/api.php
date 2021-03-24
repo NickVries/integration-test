@@ -24,4 +24,5 @@ Route::group(
 
 Route::get('shipments', ShipmentController::class . '@get')
     ->name('get-shipments')
-    ->middleware('set_access_token');
+    ->middleware('set_access_token')
+    ->middleware('transform_to_json_api');

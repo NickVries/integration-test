@@ -37,7 +37,7 @@ class Order
         return new Shipment(
             shopId: $shopId,
             createdAt: $this->createdAt,
-            recipientAddress: $this->deliveryAddress->toIntegrationAddress(),
+            recipientAddress: $this->deliveryAddress->toShipmentAddress(),
             description: $this->description,
             customerReference: (string) $this->orderId,
             channel: $channel,

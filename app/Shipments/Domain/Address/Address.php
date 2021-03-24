@@ -25,7 +25,7 @@ class Address
     ) {
     }
 
-    public function toIntegrationAddress(): ShipmentAddress
+    public function toShipmentAddress(): ShipmentAddress
     {
         $company = trim((string) $this->accountName);
         $fullName = $this->contactName;

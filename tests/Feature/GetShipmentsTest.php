@@ -84,8 +84,6 @@ class GetShipmentsTest extends TestCase
 
     public function test_should_get_one_shipment(): void
     {
-        $this->withoutExceptionHandling();
-
         $token = $this->createActiveToken();
 
         $faker = Factory::create();
