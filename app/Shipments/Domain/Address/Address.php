@@ -22,6 +22,7 @@ class Address
         private ?string $city,
         private ?string $accountName,
         private ?string $phone,
+        private ?string $email,
     ) {
     }
 
@@ -49,6 +50,7 @@ class Address
             firstName: $fullName->getFirstName(),
             lastName: $fullName->getLastName(),
             company: $company,
+            email: trim($this->email),
             phoneNumber: trim((string) $this->phone),
         );
     }

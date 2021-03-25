@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Address;
 
+use App\Shipments\Domain\Account\Account;
+use App\Shipments\Domain\Account\AccountsGateway;
+use App\Shipments\Domain\Account\NullAccount;
 use JetBrains\PhpStorm\ArrayShape;
+use Ramsey\Uuid\Uuid;
 
 class AddressFactory
 {
+    public function __construct(private AccountsGateway $accountGateway)
+    {
+    }
+
     public function createFromArray(
         #[ArrayShape([
+            'Account'      => 'string',
             'ContactName'  => 'string',
             'Country'      => 'string',
             'Postcode'     => 'string',
@@ -23,6 +32,8 @@ class AddressFactory
         ])]
         array $address
     ): Address {
+        $account = $this->fetchAccount($address);
+
         return new Address(
             isset($address['ContactName']) ? new FullName($address['ContactName']) : new NullFullName(),
             $address['Country'] ?? null,
@@ -34,7 +45,15 @@ class AddressFactory
             $address['City'] ?? null,
             $address['AccountName'] ?? null,
             $address['Phone'] ?? null,
+            $account->getEmail(),
         );
+    }
+
+    private function fetchAccount(array $address): Account
+    {
+        return !empty($address['Account']) ? $this->accountGateway->fetchOneByAccountId(
+            Uuid::fromString($address['Account'])
+        ) : new NullAccount();
     }
 
     public function createNullAddress(): Address
