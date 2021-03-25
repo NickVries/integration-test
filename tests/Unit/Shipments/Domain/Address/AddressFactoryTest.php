@@ -59,7 +59,7 @@ class AddressFactoryTest extends TestCase
             'last_name'            => $lastName,
             'company'              => $company,
             'phone_number'         => $phoneNumber,
-        ], $address->toJsonApiArray());
+        ], $address->toShipmentAddress()->toArray());
     }
 
     public function test_should_create_address_from_array_with_nulls(): void
@@ -79,7 +79,7 @@ class AddressFactoryTest extends TestCase
             'Phone'        => null,
         ]);
 
-        self::assertEquals([], $address->toJsonApiArray());
+        self::assertEquals([], $address->toShipmentAddress()->toArray());
     }
 
     public function test_should_use_account_name_when_no_contact_name_is_available(): void
@@ -123,6 +123,6 @@ class AddressFactoryTest extends TestCase
             'first_name'           => $firstName,
             'last_name'            => $lastName,
             'phone_number'         => $phoneNumber,
-        ], $address->toJsonApiArray());
+        ], $address->toShipmentAddress()->toArray());
     }
 }

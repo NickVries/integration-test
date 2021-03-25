@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Shipments\Domain\Address;
 
 use JetBrains\PhpStorm\Immutable;
-use function array_filter;
+use MyParcelCom\Integration\Shipment\Address as ShipmentAddress;
+use function trim;
 
 #[Immutable]
 class Address
@@ -24,7 +25,7 @@ class Address
     ) {
     }
 
-    public function toJsonApiArray(): array
+    public function toShipmentAddress(): ShipmentAddress
     {
         $company = trim((string) $this->accountName);
         $fullName = $this->contactName;
@@ -37,18 +38,18 @@ class Address
             $company = null;
         }
 
-        return array_filter([
-            'street_1'             => $this->addressLine1->getStreet(),
-            'street_2'             => trim($this->addressLine2 . ' ' . $this->addressLine3),
-            'street_number'        => (int) $this->addressLine1->getHouseNumber(),
-            'street_number_suffix' => $this->addressLine1->getHouseNumberExt(),
-            'postal_code'          => trim((string) $this->postcode),
-            'city'                 => trim((string) $this->city),
-            'country_code'         => trim((string) $this->country),
-            'first_name'           => $fullName->getFirstName(),
-            'last_name'            => $fullName->getLastName(),
-            'company'              => $company,
-            'phone_number'         => trim((string) $this->phone),
-        ]);
+        return new ShipmentAddress(
+            street1: $this->addressLine1->getStreet(),
+            street2: trim($this->addressLine2 . ' ' . $this->addressLine3),
+            streetNumber: (int) $this->addressLine1->getHouseNumber(),
+            streetNumberSuffix: $this->addressLine1->getHouseNumberExt(),
+            postalCode: trim((string) $this->postcode),
+            city: trim((string) $this->city),
+            countryCode: trim((string) $this->country),
+            firstName: $fullName->getFirstName(),
+            lastName: $fullName->getLastName(),
+            company: $company,
+            phoneNumber: trim((string) $this->phone),
+        );
     }
 }

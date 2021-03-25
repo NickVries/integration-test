@@ -6,10 +6,10 @@ namespace Tests\Unit\Authentication\Domain;
 
 use App\Authentication\Domain\AuthorizationSession;
 use App\Authentication\Domain\Exceptions\AuthSessionExpiredException;
-use App\Authentication\Domain\ShopId;
 use Faker\Factory;
 use Illuminate\Cache\Repository;
 use Mockery;
+use MyParcelCom\Integration\ShopId;
 use PHPUnit\Framework\TestCase;
 
 class AuthorizationSessionTest extends TestCase

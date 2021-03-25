@@ -7,12 +7,12 @@ namespace Tests\Unit\Authentication\Domain;
 use App\Authentication\Domain\AuthServerInterface;
 use App\Authentication\Domain\ExpiresAt;
 use App\Authentication\Domain\ExpiresIn;
-use App\Authentication\Domain\ShopId;
 use App\Authentication\Domain\Token;
 use App\Authentication\Domain\TokenType;
 use Carbon\Carbon;
 use Faker\Factory;
 use Mockery;
+use MyParcelCom\Integration\ShopId;
 use PHPUnit\Framework\TestCase;
 
 class TokenTest extends TestCase

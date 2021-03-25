@@ -9,6 +9,7 @@ use DateInterval;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Uuid;
 
 class AuthorizationSession

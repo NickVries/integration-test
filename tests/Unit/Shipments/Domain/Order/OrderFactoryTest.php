@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Order;
 
-use App\Authentication\Domain\ShopId;
 use App\Shipments\Domain\Address\Address;
 use App\Shipments\Domain\Address\AddressesGateway;
-use App\Shipments\Domain\Address\FullName;
 use App\Shipments\Domain\Item\Item;
 use App\Shipments\Domain\Item\Weight;
 use App\Shipments\Domain\Order\OrderFactory;
@@ -16,17 +14,15 @@ use App\Shipments\Domain\Order\OrderLineFactory;
 use Faker\Factory;
 use Mockery;
 use Mockery\MockInterface;
+use MyParcelCom\Integration\Shipment\Address as ShipmentAddress;
+use MyParcelCom\Integration\Shipment\Items\Item as ShipmentItem;
+use MyParcelCom\Integration\ShopId;
 use PHPUnit\Framework\TestCase;
+use function bcmul;
 use function random_int;
 
 class OrderFactoryTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function test_should_create_order_from_array(): void
     {
         $faker = Factory::create();
@@ -47,7 +43,9 @@ class OrderFactoryTest extends TestCase
         $itemPictureUrl = $faker->imageUrl();
 
         $addressMock = Mockery::mock(Address::class, [
-            'toJsonApiArray' => []
+            'toShipmentAddress' => Mockery::mock(ShipmentAddress::class, [
+                'toArray' => [],
+            ]),
         ]);
 
         $factory = new OrderFactory(
@@ -56,7 +54,7 @@ class OrderFactoryTest extends TestCase
                 $this->orderLineMock(
                     $orderLineAmount / 100,
                     $orderLineDescription,
-                    $orderLineItemDescription,
+                    $orderCurrencyCode,
                     (float) $orderLineQuantity,
                     $this->itemMock($this->weightMock($itemWeight), $itemPictureUrl)
                 )
@@ -66,14 +64,14 @@ class OrderFactoryTest extends TestCase
         $responseCreatedTimestamp = $createdAt * 1000;
 
         $order = $factory->createFromArray([
-            'OrderID'                        => $orderId,
-            'Created'                        => "/Date(${responseCreatedTimestamp})/",
-            'Description'                    => $orderDescription,
-            'ShippingMethodDescription'      => $orderShippingMethodDescription,
-            'AmountFC'                       => $orderAmount / 100,
-            'Currency'                       => $orderCurrencyCode,
-            'DeliveryAddress'                => $faker->uuid,
-            'SalesOrderLines'                => [
+            'OrderID'                   => $orderId,
+            'Created'                   => "/Date(${responseCreatedTimestamp})/",
+            'Description'               => $orderDescription,
+            'ShippingMethodDescription' => $orderShippingMethodDescription,
+            'AmountFC'                  => $orderAmount / 100,
+            'Currency'                  => $orderCurrencyCode,
+            'DeliveryAddress'           => $faker->uuid,
+            'SalesOrderLines'           => [
                 'results' => [
                     [
                         'AmountFC'        => $orderLineAmount / 100,
@@ -133,7 +131,7 @@ class OrderFactoryTest extends TestCase
                     ],
                 ],
             ],
-        ], $order->toJsonApiArray($shopIdMock, 'test'));
+        ], $order->toShipment($shopIdMock, 'test')->transformToJsonApiArray());
     }
 
     private function addressesGatewayMock(Address $addressMock): AddressesGateway|MockInterface
@@ -153,16 +151,35 @@ class OrderFactoryTest extends TestCase
     private function orderLineMock(
         ?float $orderLineAmount,
         ?string $orderLineDescription,
-        ?string $orderLineItemDescription,
+        ?string $orderCurrencyCode,
         ?float $orderLineQuantity,
         MockInterface|Item $itemMock
     ): OrderLine|MockInterface {
         return Mockery::mock(OrderLine::class, [
-            'getAmountFC'        => $orderLineAmount,
-            'getDescription'     => $orderLineDescription,
-            'getItemDescription' => $orderLineItemDescription,
-            'getQuantity'        => $orderLineQuantity,
-            'getItem'            => $itemMock,
+            'toShipmentItem' => Mockery::mock(ShipmentItem::class, [
+                'toArray' => [
+                    'description' => $orderLineDescription,
+                    'image_url'   => $itemMock->getPictureUrl(),
+                    'item_value'  => [
+                        'amount'   => (int) bcmul('100', (string) $orderLineAmount),
+                        'currency' => $orderCurrencyCode,
+                    ],
+                    'quantity'    => (int) $orderLineQuantity,
+                    'item_weight' => $itemMock->getWeight()->toGrams(),
+                ],
+            ]),
+            'getItem'        => $itemMock,
+        ]);
+    }
+
+    private function emptyOrderLineMock(
+        MockInterface|Item $itemMock
+    ): OrderLine|MockInterface {
+        return Mockery::mock(OrderLine::class, [
+            'toShipmentItem' => Mockery::mock(ShipmentItem::class, [
+                'toArray' => [],
+            ]),
+            'getItem'        => $itemMock,
         ]);
     }
 
@@ -188,14 +205,12 @@ class OrderFactoryTest extends TestCase
 
         $factory = new OrderFactory(
             $this->addressesGatewayMock(Mockery::mock(Address::class, [
-                'toJsonApiArray' => [],
+                'toShipmentAddress' => Mockery::mock(ShipmentAddress::class, [
+                    'toArray' => [],
+                ]),
             ])),
             $this->orderLineFactoryMock(
-                $this->orderLineMock(
-                    null,
-                    null,
-                    null,
-                    null,
+                $this->emptyOrderLineMock(
                     $this->itemMock($this->weightMock(null), null)
                 )
             )
@@ -240,6 +255,12 @@ class OrderFactoryTest extends TestCase
                     ],
                 ],
             ],
-        ], $order->toJsonApiArray($shopIdMock, 'test'));
+        ], $order->toShipment($shopIdMock, 'test')->transformToJsonApiArray());
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }

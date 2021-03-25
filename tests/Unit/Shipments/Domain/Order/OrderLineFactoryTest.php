@@ -11,6 +11,8 @@ use App\Shipments\Domain\Order\OrderLineFactory;
 use Faker\Factory;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use function bcdiv;
+use function bcmul;
 use function random_int;
 
 class OrderLineFactoryTest extends TestCase
@@ -19,14 +21,16 @@ class OrderLineFactoryTest extends TestCase
     {
         $faker = Factory::create();
 
+        $imageUrl = $faker->imageUrl();
+        $grams = random_int(1, 1000);
         $factory = new OrderLineFactory(
             Mockery::mock(ItemsGateway::class, [
                 'fetchOneByItemId' => Mockery::mock(Item::class, [
                     'getDescription' => $faker->text,
                     'getWeight'      => Mockery::mock(Weight::class, [
-                        'toGrams' => random_int(1, 1000),
+                        'toGrams' => $grams,
                     ]),
-                    'getPictureUrl'  => $faker->imageUrl(),
+                    'getPictureUrl'  => $imageUrl,
                 ]),
             ])
         );
@@ -44,10 +48,15 @@ class OrderLineFactoryTest extends TestCase
             'Item'            => $faker->uuid,
         ]);
 
-        self::assertEquals($amount, $orderLine->getAmountFC());
-        self::assertEquals($quantity, $orderLine->getQuantity());
-        self::assertEquals($description, $orderLine->getDescription());
-        self::assertEquals($itemDescription, $orderLine->getItemDescription());
+        self::assertEquals([
+            'description' => $description,
+            'image_url' => $imageUrl,
+            'item_value' => [
+                'amount' => (int) bcmul((string) $amount, '100'),
+            ],
+            'quantity' => (int) $quantity,
+            'item_weight' => $grams,
+        ], $orderLine->toShipmentItem(null)->toArray());
     }
 
     public function test_should_create_order_line_from_array_with_nulls(): void
@@ -72,9 +81,6 @@ class OrderLineFactoryTest extends TestCase
             'Item'            => null,
         ]);
 
-        self::assertNull($orderLine->getAmountFC());
-        self::assertNull($orderLine->getQuantity());
-        self::assertNull($orderLine->getDescription());
-        self::assertNull($orderLine->getItemDescription());
+        self::assertEquals([], $orderLine->toShipmentItem(null)->toArray());
     }
 }

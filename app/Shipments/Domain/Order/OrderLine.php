@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Shipments\Domain\Order;
 
 use App\Shipments\Domain\Item\Item;
+use JetBrains\PhpStorm\Pure;
+use MyParcelCom\Integration\Shipment\Items\Item as ShipmentItem;
+use MyParcelCom\Integration\Shipment\Price;
+use function bcmul;
 
 class OrderLine
 {
@@ -17,24 +21,16 @@ class OrderLine
     ) {
     }
 
-    public function getAmountFC(): ?float
+    #[Pure]
+    public function toShipmentItem(?string $orderCurrency): ShipmentItem
     {
-        return $this->amountFC;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function getItemDescription(): ?string
-    {
-        return $this->itemDescription;
-    }
-
-    public function getQuantity(): ?float
-    {
-        return $this->quantity;
+        return new ShipmentItem(
+            description: (string) $this->description,
+            quantity: $this->quantity ? (int) $this->quantity : null,
+            imageUrl: $this->item->getPictureUrl(),
+            itemValue: new Price((int) (bcmul('100', (string) $this->amountFC)), (string) $orderCurrency),
+            itemWeight: $this->item->getWeight()->toGrams(),
+        );
     }
 
     public function getItem(): Item

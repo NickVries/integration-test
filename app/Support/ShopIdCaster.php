@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use App\Authentication\Domain\ShopId;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\ArrayShape;
+use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Uuid;
 
 class ShopIdCaster implements CastsAttributes
