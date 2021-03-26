@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Item;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\Item\Item;
 use App\Shipments\Domain\Item\ItemFactory;
 use App\Shipments\Domain\Item\ItemsGateway;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Utils;
 use Mockery;
@@ -23,7 +23,7 @@ class ItemsGatewayTest extends TestCase
     public function test_should_get_cached_item_object(): void
     {
         $itemMock = Mockery::mock(Item::class);
-        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
+        $clientMock = Mockery::mock(Client::class);
         $responseMock = Mockery::mock(ResponseInterface::class);
         $responseMock->shouldReceive('getBody')->once()->andReturn(Utils::jsonEncode([]));
         $clientMock->shouldReceive('get')->once()->andReturn($responseMock);
@@ -31,12 +31,12 @@ class ItemsGatewayTest extends TestCase
             'createFromArray' => $itemMock,
         ]);
 
-        $gateway = new ItemsGateway($clientMock, $itemFactoryMock);
+        $gateway = new ItemsGateway($itemFactoryMock);
 
         $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
 
-        $gateway->fetchOneByItemId($uuidMock);
-        $item = $gateway->fetchOneByItemId($uuidMock);
+        $gateway->fetchOneByItemId($uuidMock, $clientMock);
+        $item = $gateway->fetchOneByItemId($uuidMock, $clientMock);
 
         self::assertSame($itemMock, $item);
     }

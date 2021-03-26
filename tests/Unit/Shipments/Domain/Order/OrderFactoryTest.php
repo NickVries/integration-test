@@ -12,6 +12,7 @@ use App\Shipments\Domain\Order\OrderFactory;
 use App\Shipments\Domain\Order\OrderLine;
 use App\Shipments\Domain\Order\OrderLineFactory;
 use Faker\Factory;
+use GuzzleHttp\Client;
 use Mockery;
 use Mockery\MockInterface;
 use MyParcelCom\Integration\Shipment\Address as ShipmentAddress;
@@ -82,7 +83,7 @@ class OrderFactoryTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ], Mockery::mock(Client::class));
 
         $shopIdUuid = $faker->uuid;
         $shopIdMock = Mockery::mock(ShopId::class, [
@@ -235,7 +236,7 @@ class OrderFactoryTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ], Mockery::mock(Client::class));
 
         $shopIdUuid = $faker->uuid;
         $shopIdMock = Mockery::mock(ShopId::class, [

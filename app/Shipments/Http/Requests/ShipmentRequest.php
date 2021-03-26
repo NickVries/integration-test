@@ -2,9 +2,11 @@
 
 namespace App\Shipments\Http\Requests;
 
+use App\Authentication\Domain\Token;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use MyParcelCom\Integration\ShopId;
+use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 
 class ShipmentRequest extends FormRequest
@@ -36,6 +38,34 @@ class ShipmentRequest extends FormRequest
 
     public function shopId(): ShopId
     {
-        return new ShopId(Uuid::fromString($this->query('shop_id')));
+        $shopId = $this->query('shop_id');
+
+        if (!$shopId) {
+            throw new RequestException('Bad request', 'No shop_id provided in the request query', 400);
+        }
+
+        try {
+            $shopUuid = Uuid::fromString($shopId);
+        } catch (InvalidUuidStringException $exception) {
+            throw new RequestException('Unprocessable entity', 'shop_id is not a valid UUID', 422);
+        }
+
+        return new ShopId($shopUuid);
+    }
+
+    public function token(): Token
+    {
+        $shopId = $this->shopId();
+        $token = Token::findByShopId($shopId);
+
+        if (!$token) {
+            throw new RequestException(
+                'Unauthorized',
+                "No ExactOnline.nl API access token found for shop ${shopId}. Is shop authenticated?",
+                401
+            );
+        }
+
+        return $token;
     }
 }

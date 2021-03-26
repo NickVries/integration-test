@@ -8,6 +8,7 @@ use App\Shipments\Domain\Account\Account;
 use App\Shipments\Domain\Account\AccountsGateway;
 use App\Shipments\Domain\Address\AddressFactory;
 use Faker\Factory;
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -55,7 +56,7 @@ class AddressFactoryTest extends TestCase
             'City'         => $city,
             'AccountName'  => $company,
             'Phone'        => $phoneNumber,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([
             'street_1'             => $streetName,
@@ -91,7 +92,7 @@ class AddressFactoryTest extends TestCase
             'City'         => null,
             'AccountName'  => null,
             'Phone'        => null,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([], $address->toShipmentAddress()->toArray());
     }
@@ -133,7 +134,7 @@ class AddressFactoryTest extends TestCase
             'City'         => $city,
             'AccountName'  => $firstName . ' ' . $lastName,
             'Phone'        => $phoneNumber,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([
             'street_1'             => $streetName,

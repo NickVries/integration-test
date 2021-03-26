@@ -4,30 +4,37 @@ declare(strict_types=1);
 
 namespace App\Shipments\Http\Controllers;
 
+use App\Authentication\Domain\AuthServerInterface;
+use App\Http\ExactApiClient;
 use App\Shipments\Domain\Order\Order;
 use App\Shipments\Domain\Order\OrdersGateway;
 use App\Shipments\Http\Requests\ShipmentRequest;
 use GuzzleHttp\Exception\GuzzleException;
 use MyParcelCom\Integration\Shipment\Shipment;
-use MyParcelCom\Integration\ShopId;
 use function array_map;
 use function config;
 
 class ShipmentController
 {
     /**
-     * @param OrdersGateway   $ordersGateway
-     * @param ShopId          $shopId
-     * @param ShipmentRequest $request
+     * @param OrdersGateway       $ordersGateway
+     * @param ShipmentRequest     $request
+     * @param AuthServerInterface $authServer
      * @return Shipment[]
      * @throws GuzzleException
      */
     public function get(
         OrdersGateway $ordersGateway,
-        ShopId $shopId,
-        ShipmentRequest $request
+        ShipmentRequest $request,
+        AuthServerInterface $authServer
     ): array {
-        $orders = $ordersGateway->fetchByDateRange($request->shopId(), $request->startDate(), $request->endDate());
+
+        $client = ExactApiClient::createWithDivision($authServer, $request->token());
+        $shopId = $request->shopId();
+        $startDate = $request->startDate();
+        $endDate = $request->endDate();
+
+        $orders = $ordersGateway->fetchByDateRange($shopId, $startDate, $endDate, $client);
 
         return array_map(
             static fn(Order $order) => $order->toShipment($shopId, config('app.version')),

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Order;
 
+use App\Shipments\Domain\Address\Address;
 use App\Shipments\Domain\Address\AddressesGateway;
 use App\Shipments\Domain\Address\NullAddress;
 use Carbon\Carbon;
 use DateTimeInterface;
+use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 use Ramsey\Uuid\Uuid;
 use function array_map;
@@ -32,7 +34,8 @@ class OrderFactory
             'SalesOrderLines'           => 'array',
             'Created'                   => 'string',
         ])]
-        array $order
+        array $order,
+        Client $client
     ): Order {
         return new Order(
             $order['OrderID'],
@@ -40,17 +43,17 @@ class OrderFactory
             $order['ShippingMethodDescription'] ?? null,
             (float) $order['AmountFC'],
             $order['Currency'],
-            $order['DeliveryAddress'] ? $this->addressesGateway->fetchOneByAddressId(Uuid::fromString($order['DeliveryAddress'])) : new NullAddress(),
-            $this->createOrderLineCollection($order['SalesOrderLines']['results'] ?? []),
+            $this->createDeliveryAddress($order, $client),
+            $this->createOrderLineCollection($order['SalesOrderLines']['results'] ?? [], $client),
             $order['Created'] ? $this->createCreatedAt($order['Created']) : null
         );
     }
 
-    private function createOrderLineCollection(array $results): OrderLineCollection
+    private function createOrderLineCollection(array $results, Client $client): OrderLineCollection
     {
         return new OrderLineCollection(
             array_map(
-                fn(array $line) => $this->orderLineFactory->createFromArray($line),
+                fn(array $line) => $this->orderLineFactory->createFromArray($line, $client),
                 $results
             )
         );
@@ -65,5 +68,13 @@ class OrderFactory
         }
 
         return $createdAt;
+    }
+
+    private function createDeliveryAddress(array $order, Client $client): Address
+    {
+        return $order['DeliveryAddress'] ? $this->addressesGateway->fetchOneByAddressId(
+            Uuid::fromString($order['DeliveryAddress']),
+            $client
+        ) : new NullAddress();
     }
 }

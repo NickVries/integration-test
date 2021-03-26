@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Item;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\MakeRequest;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use ODataQuery\ODataResourcePath;
@@ -26,16 +26,15 @@ class ItemsGateway
     private array $items = [];
 
     public function __construct(
-        private ExactApiDivisionClient $client,
         private ItemFactory $itemFactory
     ) {
     }
 
-    public function fetchOneByItemId(UuidInterface $id): Item
+    public function fetchOneByItemId(UuidInterface $id, Client $client): Item
     {
         if (!array_key_exists($id->toString(), $this->items)) {
             try {
-                $response = $this->request(new ODataResourcePath(self::ENTITY . "(guid'${id}')"));
+                $response = $this->request(new ODataResourcePath(self::ENTITY . "(guid'${id}')"), $client);
             } catch (GuzzleException $e) {
                 return $this->itemFactory->createNullItem();
             }

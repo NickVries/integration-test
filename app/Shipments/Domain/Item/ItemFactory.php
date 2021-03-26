@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shipments\Domain\Item;
 
 use JetBrains\PhpStorm\ArrayShape;
-use function dd;
 
 class ItemFactory
 {
@@ -17,7 +16,7 @@ class ItemFactory
             'NetWeightUnit' => 'string',
             'PictureUrl'    => 'string',
         ])]
-        array $item
+        array $item,
     ): Item {
         $netWeight = empty($item['NetWeight']) ? null : (float) $item['NetWeight'];
         $weight = empty($item['GrossWeight']) ? $netWeight : (float) $item['GrossWeight'];

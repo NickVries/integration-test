@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Account;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\LoadAndCache;
 use App\Shipments\Domain\MakeRequest;
 use DateInterval;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use ODataQuery\ODataResourcePath;
@@ -22,18 +22,17 @@ class AccountsGateway
     private const ENTITY = 'crm/Accounts';
 
     public function __construct(
-        private ExactApiDivisionClient $client,
         private AccountFactory $accountFactory,
         private CacheInterface $cache
     ) {
     }
 
-    public function fetchOneByAccountId(UuidInterface $id): Account
+    public function fetchOneByAccountId(UuidInterface $id, Client $client): Account
     {
         $cacheKey = "account_${id}";
-        $resolver = function () use ($id): Account {
+        $resolver = function () use ($client, $id): Account {
             try {
-                $response = $this->request(new ODataResourcePath(self::ENTITY . "(guid'${id}')"));
+                $response = $this->request(new ODataResourcePath(self::ENTITY . "(guid'${id}')"), $client);
             } catch (GuzzleException $e) {
                 return $this->accountFactory->createNullAccount();
             }

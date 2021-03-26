@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Console;
 
+use App\Console\Commands\CacheAddresses;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use MyParcelCom\ConcurrencySafeMigrations\Commands\Migrate;
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Migrate::class
+        Migrate::class,
+        CacheAddresses::class,
     ];
 
     /**

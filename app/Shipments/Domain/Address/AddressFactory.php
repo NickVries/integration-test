@@ -7,6 +7,7 @@ namespace App\Shipments\Domain\Address;
 use App\Shipments\Domain\Account\Account;
 use App\Shipments\Domain\Account\AccountsGateway;
 use App\Shipments\Domain\Account\NullAccount;
+use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 use Ramsey\Uuid\Uuid;
 
@@ -30,9 +31,10 @@ class AddressFactory
             'AccountName'  => 'string',
             'Phone'        => 'string',
         ])]
-        array $address
+        array $address,
+        Client $client,
     ): Address {
-        $account = $this->fetchAccount($address);
+        $account = $this->fetchAccount($address, $client);
 
         return new Address(
             isset($address['ContactName']) ? new FullName($address['ContactName']) : new NullFullName(),
@@ -49,10 +51,11 @@ class AddressFactory
         );
     }
 
-    private function fetchAccount(array $address): Account
+    private function fetchAccount(array $address, $client): Account
     {
         return !empty($address['Account']) ? $this->accountGateway->fetchOneByAccountId(
-            Uuid::fromString($address['Account'])
+            Uuid::fromString($address['Account']),
+            $client
         ) : new NullAccount();
     }
 

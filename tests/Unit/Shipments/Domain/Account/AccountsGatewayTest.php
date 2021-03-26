@@ -5,10 +5,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Account;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\Account\Account;
 use App\Shipments\Domain\Account\AccountFactory;
 use App\Shipments\Domain\Account\AccountsGateway;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Utils;
 use Mockery;
@@ -25,7 +25,7 @@ class AccountsGatewayTest extends TestCase
     public function test_should_get_fresh_account_object(): void
     {
         $accountMock = Mockery::mock(Account::class);
-        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
+        $clientMock = Mockery::mock(Client::class);
         $responseMock = Mockery::mock(ResponseInterface::class);
         $responseMock->shouldReceive('getBody')->once()->andReturn(Utils::jsonEncode([]));
         $clientMock->shouldReceive('get')->once()->andReturn($responseMock);
@@ -33,14 +33,14 @@ class AccountsGatewayTest extends TestCase
             'createFromArray' => $accountMock,
         ]);
 
-        $gateway = new AccountsGateway($clientMock, $accountFactoryMock, Mockery::mock(CacheInterface::class, [
+        $gateway = new AccountsGateway($accountFactoryMock, Mockery::mock(CacheInterface::class, [
             'has' => false,
             'set' => null,
         ]));
 
         $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
 
-        $account = $gateway->fetchOneByAccountId($uuidMock);
+        $account = $gateway->fetchOneByAccountId($uuidMock, $clientMock);
 
         self::assertSame($accountMock, $account);
     }
@@ -48,18 +48,18 @@ class AccountsGatewayTest extends TestCase
     public function test_should_get_cached_account_object(): void
     {
         $accountMock = Mockery::mock(Account::class);
-        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
+        $clientMock = Mockery::mock(Client::class);
         $accountFactoryMock = Mockery::mock(AccountFactory::class);
 
-        $gateway = new AccountsGateway($clientMock, $accountFactoryMock, Mockery::mock(CacheInterface::class, [
+        $gateway = new AccountsGateway($accountFactoryMock, Mockery::mock(CacheInterface::class, [
             'has' => true,
             'get' => $accountMock,
         ]));
 
         $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
 
-        $gateway->fetchOneByAccountId($uuidMock);
-        $account = $gateway->fetchOneByAccountId($uuidMock);
+        $gateway->fetchOneByAccountId($uuidMock, $clientMock);
+        $account = $gateway->fetchOneByAccountId($uuidMock, $clientMock);
 
         self::assertSame($accountMock, $account);
     }

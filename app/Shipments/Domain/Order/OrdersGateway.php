@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Order;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\LoadAndCache;
 use App\Shipments\Domain\MakeRequest;
 use Carbon\Carbon;
 use DateInterval;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use MyParcelCom\Integration\ShopId;
@@ -30,25 +30,25 @@ class OrdersGateway
     private const FILTER_DATE_FIELD = 'Created';
 
     public function __construct(
-        private ExactApiDivisionClient $client,
         private OrderFactory $orderFactory,
         private CacheInterface $cache
     ) {
     }
 
     /**
+     * @param Client $client
      * @param ShopId $shopId
      * @param Carbon $start
      * @param Carbon $end
      * @return Order[]
      * @throws GuzzleException
      */
-    public function fetchByDateRange(ShopId $shopId, Carbon $start, Carbon $end): array
+    public function fetchByDateRange(ShopId $shopId, Carbon $start, Carbon $end, Client $client): array
     {
         $cacheKey = "orders_${shopId}_{$start->getTimestamp()}_{$end->getTimestamp()}";
         $resolver = fn(): array => array_map(
-            fn(array $order) => $this->orderFactory->createFromArray($order),
-            Arr::get($this->request($this->createQuery($start, $end)), 'd.results', [])
+            fn(array $order) => $this->orderFactory->createFromArray($order, $client),
+            Arr::get($this->request($this->createQuery($start, $end), $client), 'd.results', [])
         );
         $ttl = new DateInterval('PT10M');
 

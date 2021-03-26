@@ -9,6 +9,7 @@ use App\Shipments\Domain\Item\ItemsGateway;
 use App\Shipments\Domain\Item\Weight;
 use App\Shipments\Domain\Order\OrderLineFactory;
 use Faker\Factory;
+use GuzzleHttp\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use function bcdiv;
@@ -46,7 +47,7 @@ class OrderLineFactoryTest extends TestCase
             'ItemDescription' => $itemDescription,
             'Quantity'        => $quantity,
             'Item'            => $faker->uuid,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([
             'description' => $description,
@@ -79,7 +80,7 @@ class OrderLineFactoryTest extends TestCase
             'ItemDescription' => null,
             'Quantity'        => null,
             'Item'            => null,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([], $orderLine->toShipmentItem(null)->toArray());
     }
