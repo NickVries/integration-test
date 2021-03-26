@@ -45,6 +45,7 @@ class AddressFactoryTest extends TestCase
         $phoneNumber = $faker->phoneNumber;
 
         $address = $factory->createFromArray([
+            'ID'           => $faker->uuid,
             'Account'      => $faker->uuid,
             'ContactName'  => $firstName . ' ' . $lastName,
             'Country'      => $countryCode,
@@ -81,6 +82,7 @@ class AddressFactoryTest extends TestCase
         );
 
         $address = $factory->createFromArray([
+            'ID'           => Factory::create()->uuid,
             'Account'      => null,
             'ContactName'  => null,
             'Country'      => null,
@@ -124,6 +126,7 @@ class AddressFactoryTest extends TestCase
         $phoneNumber = $faker->phoneNumber;
 
         $address = $factory->createFromArray([
+            'ID'           => $faker->uuid,
             'Account'      => $faker->uuid,
             'Country'      => $countryCode,
             'Postcode'     => $postcode,

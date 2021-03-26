@@ -20,6 +20,7 @@ class AccountsGateway
     use LoadAndCache;
 
     private const ENTITY = 'crm/Accounts';
+    private const CACHE_TTL = 'P1M';
 
     public function __construct(
         private AccountFactory $accountFactory,
@@ -40,7 +41,7 @@ class AccountsGateway
                 (array) Arr::get($response, 'd', [])
             );
         };
-        $ttl = new DateInterval('P1D');
+        $ttl = new DateInterval(self::CACHE_TTL);
 
         return $this->loadCached($cacheKey, $resolver, $ttl, $this->cache);
     }

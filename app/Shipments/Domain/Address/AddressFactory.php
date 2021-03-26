@@ -19,6 +19,7 @@ class AddressFactory
 
     public function createFromArray(
         #[ArrayShape([
+            'ID'           => 'string',
             'Account'      => 'string',
             'ContactName'  => 'string',
             'Country'      => 'string',
@@ -37,6 +38,7 @@ class AddressFactory
         $account = $this->fetchAccount($address, $client);
 
         return new Address(
+            Uuid::fromString($address['ID']),
             isset($address['ContactName']) ? new FullName($address['ContactName']) : new NullFullName(),
             $address['Country'] ?? null,
             $address['Postcode'] ?? null,

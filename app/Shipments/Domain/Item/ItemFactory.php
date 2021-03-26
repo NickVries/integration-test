@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Shipments\Domain\Item;
 
 use JetBrains\PhpStorm\ArrayShape;
+use Ramsey\Uuid\Uuid;
 
 class ItemFactory
 {
     public function createFromArray(
         #[ArrayShape([
+            'ID'            => 'string',
             'Description'   => 'string',
             'GrossWeight'   => 'string',
             'NetWeight'     => 'float',
@@ -22,6 +24,7 @@ class ItemFactory
         $weight = empty($item['GrossWeight']) ? $netWeight : (float) $item['GrossWeight'];
 
         return new Item(
+            Uuid::fromString($item['ID']),
             (string) $item['Description'],
             Weight::createFromUnit($weight, (string) $item['NetWeightUnit']),
             $item['PictureUrl'],

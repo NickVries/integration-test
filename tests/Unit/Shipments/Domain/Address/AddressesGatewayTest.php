@@ -8,6 +8,7 @@ namespace Tests\Unit\Shipments\Domain\Address;
 use App\Shipments\Domain\Address\Address;
 use App\Shipments\Domain\Address\AddressesGateway;
 use App\Shipments\Domain\Address\AddressFactory;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Utils;
@@ -19,6 +20,8 @@ use Ramsey\Uuid\UuidInterface;
 
 class AddressesGatewayTest extends TestCase
 {
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
     /**
      * @throws GuzzleException
      */
@@ -64,9 +67,55 @@ class AddressesGatewayTest extends TestCase
         self::assertSame($addressMock, $address);
     }
 
-    public function tearDown(): void
+
+
+    public function test_should_get_no_addresses_by_date_range(): void
     {
-        parent::tearDown();
-        Mockery::close();
+        $clientMock = Mockery::mock(Client::class, [
+            'get' => Mockery::mock(ResponseInterface::class, [
+                'getBody' => json_encode([
+                    'd' => [
+                        'results' => [],
+                    ],
+                ], JSON_THROW_ON_ERROR),
+            ]),
+        ]);
+        $addressFactoryMock = Mockery::mock(AddressFactory::class);
+
+        $gateway = new AddressesGateway($addressFactoryMock, Mockery::mock(CacheInterface::class));
+
+        $dateMock = Mockery::mock(Carbon::class, [
+            'toIso8601ZuluString' => '',
+        ]);
+
+        $addresses = $gateway->fetchByDateRange($dateMock, $dateMock, $clientMock);
+
+        self::assertCount(0, $addresses);
+    }
+
+    public function test_should_get_addresses_by_date_range(): void
+    {
+        $clientMock = Mockery::mock(Client::class, [
+            'get' => Mockery::mock(ResponseInterface::class, [
+                'getBody' => json_encode([
+                    'd' => [
+                        'results' => [[]]
+                    ]
+                ], JSON_THROW_ON_ERROR),
+            ]),
+        ]);
+        $addressFactoryMock = Mockery::mock(AddressFactory::class, [
+            'createFromArray' => Mockery::mock(Address::class)
+        ]);
+
+        $gateway = new AddressesGateway($addressFactoryMock, Mockery::mock(CacheInterface::class));
+
+        $dateMock = Mockery::mock(Carbon::class, [
+            'toIso8601ZuluString' => '',
+        ]);
+
+        $addresses = $gateway->fetchByDateRange($dateMock, $dateMock, $clientMock);
+
+        self::assertCount(1, $addresses);
     }
 }

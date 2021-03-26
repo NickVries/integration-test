@@ -120,6 +120,7 @@ class GetShipmentsTest extends TestCase
 
         $deliverAddressResponse = new Response(200, [], json_encode([
             'd' => [
+                'ID'           => $faker->uuid,
                 'ContactName'  => "${firstName} ${lastName}",
                 'Country'      => $countryCode,
                 'Postcode'     => $postcode,
@@ -137,6 +138,7 @@ class GetShipmentsTest extends TestCase
 
         $itemResponse = new Response(200, [], json_encode([
             'd' => [
+                'ID'            => $faker->uuid,
                 'Description'   => $faker->text,
                 'NetWeight'     => $weight,
                 'NetWeightUnit' => 'g',

@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Authentication\Domain\AuthServerInterface;
-use App\Shipments\Domain\Address\AddressesGateway;
+use App\Shipments\Domain\Item\ItemsGateway;
 use Carbon\Carbon;
 use Closure;
 use GuzzleHttp\Client;
 use Psr\SimpleCache\CacheInterface;
 
-class CacheAddresses extends AbstractCachingCommand
+class CacheItems extends AbstractCachingCommand
 {
-    protected $signature = 'exact:cache:addresses';
+    protected $signature = 'exact:cache:items';
 
     protected $description = <<<'DESC'
-        Will access all addresses created in the last 6 hours and proactively cache them.
-        This command will also automatically cache related contacts too.
+        Will access all items created in the last 6 hours and proactively cache them.
     DESC;
 
     public function __construct(
-        private AddressesGateway $addressesGateway,
+        private ItemsGateway $itemsGateway,
         AuthServerInterface $authServer,
         CacheInterface $cache
     ) {
@@ -30,7 +29,7 @@ class CacheAddresses extends AbstractCachingCommand
 
     protected function getEntityName(): string
     {
-        return 'Address';
+        return 'Item';
     }
 
     protected function cacheableItemsResolver(): Closure
@@ -38,6 +37,6 @@ class CacheAddresses extends AbstractCachingCommand
         $start = Carbon::now()->subHours(6);
         $end = Carbon::now();
 
-        return fn(Client $client) => $this->addressesGateway->fetchByDateRange($start, $end, $client);
+        return fn(Client $client) => $this->itemsGateway->fetchByDateRange($start, $end, $client);
     }
 }
