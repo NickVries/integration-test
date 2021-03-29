@@ -17,9 +17,9 @@ class ItemFactoryTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $faker = Factory::create();
-
         $factory = new ItemFactory();
+
+        $faker = Factory::create();
 
         $description = $faker->text;
         $grossWeight = random_int(10, 99);
@@ -28,6 +28,7 @@ class ItemFactoryTest extends TestCase
         $pictureUrl = $faker->imageUrl();
 
         $factory->createFromArray([
+            'ID'            => $faker->uuid,
             'Description'   => $description,
             'GrossWeight'   => $grossWeight,
             'NetWeightUnit' => $netWeightUnit,
@@ -46,6 +47,7 @@ class ItemFactoryTest extends TestCase
         $pictureUrl = $faker->imageUrl();
 
         $item = $factory->createFromArray([
+            'ID'            => $faker->uuid,
             'Description'   => $description,
             'GrossWeight'   => $grossWeight,
             'NetWeightUnit' => null,
@@ -60,6 +62,7 @@ class ItemFactoryTest extends TestCase
         $factory = new ItemFactory();
 
         $item = $factory->createFromArray([
+            'ID'            => Factory::create()->uuid,
             'Description'   => null,
             'GrossWeight'   => null,
             'NetWeightUnit' => null,

@@ -8,7 +8,6 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
-use App\Shipments\Http\Middleware\SetExactApiAccessToken;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -69,7 +68,6 @@ class Kernel extends HttpKernel
         'signed'                => ValidateSignature::class,
         'throttle'              => ThrottleRequests::class,
         'verified'              => EnsureEmailIsVerified::class,
-        'set_access_token'      => SetExactApiAccessToken::class,
         'transform_to_json_api' => TransformsToJsonApi::class,
     ];
 }

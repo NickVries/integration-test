@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Authentication\Domain\AuthServerInterface;
+use App\Authentication\Domain\Token;
 use Closure;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Handler\MockHandler;
@@ -19,15 +21,21 @@ class ExactApiClient extends GuzzleClient
 {
     private static ?HandlerStack $handler = null;
 
-    public function __construct(string $accessToken)
+    public function __construct(string $accessToken, ?string $division = null)
     {
+        $baseUri = config('exact.api.base_uri') . config('exact.api.version') . '/';
+
+        if ($division) {
+            $baseUri .=  "${division}/";
+        }
+
         parent::__construct(array_filter([
             'headers'  => [
                 'Authorization' => "Bearer ${accessToken}",
                 'Accept'        => 'application/json',
                 'Content-type'  => 'application/json',
             ],
-            'base_uri' => config('exact.api.base_uri') . config('exact.api.version') . '/',
+            'base_uri' => $baseUri,
             'handler'  => self::$handler,
         ]));
     }
@@ -35,8 +43,8 @@ class ExactApiClient extends GuzzleClient
     /**
      * Set a guzzle stack handler
      *
-     * Useful for testing @see MockHandler
-     * @param HandlerStack|null $handler
+     * Useful for testing @param HandlerStack|null $handler
+     * @see MockHandler
      */
     public static function setHandler(?HandlerStack $handler): void
     {
@@ -44,11 +52,29 @@ class ExactApiClient extends GuzzleClient
     }
 
     /**
+     * Creates an ExactApiClient instance with assigned division in the base uri
+     *
+     * @param AuthServerInterface $authServer
+     * @param Token               $token
+     * @return static
+     */
+    public static function createWithDivision(AuthServerInterface $authServer, Token $token): self
+    {
+        $accessToken = $token->obtainAccessToken($authServer);
+        $token->save();
+
+        // we first need a client to fetch the proper division
+        $apiClient = new self($accessToken);
+
+        return new self($accessToken, (string) $apiClient->getDivision());
+    }
+
+    /**
      * Get current division
      *
      * @return int
      */
-    public function getDivision(): int
+    private function getDivision(): int
     {
         $path = new ODataResourcePath('current/Me');
         $path->setSelect(new ODataQuerySelect(['CurrentDivision']));

@@ -10,20 +10,19 @@ use GuzzleHttp\Utils;
 use JetBrains\PhpStorm\ArrayShape;
 use ODataQuery\ODataResourcePath;
 
-/**
- * @property Client $client
- */
 trait MakeRequest
 {
     /**
      * @param ODataResourcePath $path
+     * @param Client            $client
      * @return array
      * @throws GuzzleException
      */
     #[ArrayShape(['d' => 'array'])]
     private function request(
-        ODataResourcePath $path
+        ODataResourcePath $path,
+        Client $client
     ): array {
-        return Utils::jsonDecode((string) $this->client->get((string) $path)->getBody(), true);
+        return Utils::jsonDecode((string) $client->get((string) $path)->getBody(), true);
     }
 }

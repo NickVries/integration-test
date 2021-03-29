@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Address;
 
+use App\Shipments\Domain\Account\Account;
+use App\Shipments\Domain\Account\AccountsGateway;
 use App\Shipments\Domain\Address\AddressFactory;
-use App\Shipments\Domain\Address\FullName;
 use Faker\Factory;
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +21,15 @@ class AddressFactoryTest extends TestCase
     {
         $faker = Factory::create();
 
-        $factory = new AddressFactory();
+        $email = $faker->email;
+
+        $factory = new AddressFactory(
+            Mockery::mock(AccountsGateway::class, [
+                'fetchOneByAccountId' => Mockery::mock(Account::class, [
+                    'getEmail' => $email,
+                ]),
+            ])
+        );
 
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
@@ -35,6 +45,8 @@ class AddressFactoryTest extends TestCase
         $phoneNumber = $faker->phoneNumber;
 
         $address = $factory->createFromArray([
+            'ID'           => $faker->uuid,
+            'Account'      => $faker->uuid,
             'ContactName'  => $firstName . ' ' . $lastName,
             'Country'      => $countryCode,
             'Postcode'     => $postcode,
@@ -45,7 +57,7 @@ class AddressFactoryTest extends TestCase
             'City'         => $city,
             'AccountName'  => $company,
             'Phone'        => $phoneNumber,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([
             'street_1'             => $streetName,
@@ -59,14 +71,19 @@ class AddressFactoryTest extends TestCase
             'last_name'            => $lastName,
             'company'              => $company,
             'phone_number'         => $phoneNumber,
+            'email'                => $email,
         ], $address->toShipmentAddress()->toArray());
     }
 
     public function test_should_create_address_from_array_with_nulls(): void
     {
-        $factory = new AddressFactory();
+        $factory = new AddressFactory(
+            Mockery::mock(AccountsGateway::class)
+        );
 
         $address = $factory->createFromArray([
+            'ID'           => Factory::create()->uuid,
+            'Account'      => null,
             'ContactName'  => null,
             'Country'      => null,
             'Postcode'     => null,
@@ -77,7 +94,7 @@ class AddressFactoryTest extends TestCase
             'City'         => null,
             'AccountName'  => null,
             'Phone'        => null,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([], $address->toShipmentAddress()->toArray());
     }
@@ -86,7 +103,15 @@ class AddressFactoryTest extends TestCase
     {
         $faker = Factory::create();
 
-        $factory = new AddressFactory();
+        $email = $faker->email;
+
+        $factory = new AddressFactory(
+            Mockery::mock(AccountsGateway::class, [
+                'fetchOneByAccountId' => Mockery::mock(Account::class, [
+                    'getEmail' => $email,
+                ]),
+            ])
+        );
 
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
@@ -101,6 +126,8 @@ class AddressFactoryTest extends TestCase
         $phoneNumber = $faker->phoneNumber;
 
         $address = $factory->createFromArray([
+            'ID'           => $faker->uuid,
+            'Account'      => $faker->uuid,
             'Country'      => $countryCode,
             'Postcode'     => $postcode,
             'State'        => $stateCode,
@@ -110,7 +137,7 @@ class AddressFactoryTest extends TestCase
             'City'         => $city,
             'AccountName'  => $firstName . ' ' . $lastName,
             'Phone'        => $phoneNumber,
-        ]);
+        ], Mockery::mock(Client::class));
 
         self::assertEquals([
             'street_1'             => $streetName,
@@ -123,6 +150,7 @@ class AddressFactoryTest extends TestCase
             'first_name'           => $firstName,
             'last_name'            => $lastName,
             'phone_number'         => $phoneNumber,
+            'email'                => $email,
         ], $address->toShipmentAddress()->toArray());
     }
 }

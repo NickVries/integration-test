@@ -4,46 +4,89 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Shipments\Domain\Item;
 
-use App\Http\ExactApiDivisionClient;
 use App\Shipments\Domain\Item\Item;
 use App\Shipments\Domain\Item\ItemFactory;
 use App\Shipments\Domain\Item\ItemsGateway;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Utils;
+use Carbon\Carbon;
+use Faker\Factory;
+use GuzzleHttp\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\SimpleCache\CacheInterface;
 use Ramsey\Uuid\UuidInterface;
+use function json_encode;
 
 class ItemsGatewayTest extends TestCase
 {
-    /**
-     * @throws GuzzleException
-     */
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
     public function test_should_get_cached_item_object(): void
     {
         $itemMock = Mockery::mock(Item::class);
-        $clientMock = Mockery::mock(ExactApiDivisionClient::class);
-        $responseMock = Mockery::mock(ResponseInterface::class);
-        $responseMock->shouldReceive('getBody')->once()->andReturn(Utils::jsonEncode([]));
-        $clientMock->shouldReceive('get')->once()->andReturn($responseMock);
-        $itemFactoryMock = Mockery::mock(ItemFactory::class, [
-            'createFromArray' => $itemMock,
-        ]);
+        $clientMock = Mockery::mock(Client::class);
+        $itemFactoryMock = Mockery::mock(ItemFactory::class);
 
-        $gateway = new ItemsGateway($clientMock, $itemFactoryMock);
+        $gateway = new ItemsGateway($itemFactoryMock, Mockery::mock(CacheInterface::class, [
+            'has' => true,
+            'get' => $itemMock,
+        ]));
 
         $uuidMock = Mockery::mock(UuidInterface::class, ['toString' => 'test']);
 
-        $gateway->fetchOneByItemId($uuidMock);
-        $item = $gateway->fetchOneByItemId($uuidMock);
+        $gateway->fetchOneByItemId($uuidMock, $clientMock);
+        $item = $gateway->fetchOneByItemId($uuidMock, $clientMock);
 
         self::assertSame($itemMock, $item);
     }
 
-    public function tearDown(): void
+    public function test_should_get_no_items_by_date_range(): void
     {
-        parent::tearDown();
-        Mockery::close();
+        $clientMock = Mockery::mock(Client::class, [
+            'get' => Mockery::mock(ResponseInterface::class, [
+                'getBody' => json_encode([
+                    'd' => [
+                        'results' => [],
+                    ],
+                ], JSON_THROW_ON_ERROR),
+            ]),
+        ]);
+        $itemFactoryMock = Mockery::mock(ItemFactory::class);
+
+        $gateway = new ItemsGateway($itemFactoryMock, Mockery::mock(CacheInterface::class));
+
+        $dateMock = Mockery::mock(Carbon::class, [
+            'toIso8601ZuluString' => '',
+        ]);
+
+        $items = $gateway->fetchByDateRange($dateMock, $dateMock, $clientMock);
+
+        self::assertCount(0, $items);
+    }
+
+    public function test_should_get_items_by_date_range(): void
+    {
+        $clientMock = Mockery::mock(Client::class, [
+            'get' => Mockery::mock(ResponseInterface::class, [
+                'getBody' => json_encode([
+                    'd' => [
+                        'results' => [[]]
+                    ]
+                ], JSON_THROW_ON_ERROR),
+            ]),
+        ]);
+        $itemFactoryMock = Mockery::mock(ItemFactory::class, [
+            'createFromArray' => Mockery::mock(Item::class)
+        ]);
+
+        $gateway = new ItemsGateway($itemFactoryMock, Mockery::mock(CacheInterface::class));
+
+        $dateMock = Mockery::mock(Carbon::class, [
+            'toIso8601ZuluString' => '',
+        ]);
+
+        $items = $gateway->fetchByDateRange($dateMock, $dateMock, $clientMock);
+
+        self::assertCount(1, $items);
     }
 }

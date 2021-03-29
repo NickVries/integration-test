@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Shipments\Domain\Address;
 
+use App\Shipments\Domain\Cacheable;
+use DateInterval;
 use JetBrains\PhpStorm\Immutable;
+use JetBrains\PhpStorm\Pure;
 use MyParcelCom\Integration\Shipment\Address as ShipmentAddress;
+use Ramsey\Uuid\UuidInterface;
 use function trim;
 
 #[Immutable]
-class Address
+class Address implements Cacheable
 {
     public function __construct(
+        private UuidInterface $id,
         private FullName $contactName,
         private ?string $country,
         private ?string $postcode,
@@ -22,6 +27,7 @@ class Address
         private ?string $city,
         private ?string $accountName,
         private ?string $phone,
+        private ?string $email,
     ) {
     }
 
@@ -49,7 +55,30 @@ class Address
             firstName: $fullName->getFirstName(),
             lastName: $fullName->getLastName(),
             company: $company,
+            email: trim($this->email),
             phoneNumber: trim((string) $this->phone),
         );
+    }
+
+    #[Pure]
+    public function getCacheKey(): string
+    {
+        return self::generateCacheKey($this->id->toString());
+    }
+
+    #[Pure]
+    public static function generateCacheKey(string $identifier): string
+    {
+        return "address_${identifier}";
+    }
+
+    public function __toString(): string
+    {
+        return "Address [{$this->id}]";
+    }
+
+    public static function getCacheTtl(): DateInterval
+    {
+        return new DateInterval('P1M');
     }
 }
