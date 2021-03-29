@@ -35,19 +35,4 @@ class AccountFactoryTest extends TestCase
 
         self::assertEmpty($account->getEmail());
     }
-
-    public function test_should_use_account_name_when_no_contact_name_is_available(): void
-    {
-        $faker = Factory::create();
-
-        $factory = new AccountFactory();
-
-        $email = $faker->email;
-
-        $account = $factory->createFromArray([
-            'Email' => $email,
-        ]);
-
-        self::assertEquals($email, $account->getEmail());
-    }
 }
