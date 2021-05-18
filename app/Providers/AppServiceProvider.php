@@ -7,7 +7,6 @@ namespace App\Providers;
 use App\Authentication\Domain\AuthorizationSession;
 use App\Authentication\Domain\AuthServer;
 use App\Authentication\Domain\AuthServerInterface;
-use App\Http\ExactAuthClient;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use function config;
@@ -22,9 +21,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(AuthServerInterface::class, fn() => new AuthServer(
-            new ExactAuthClient(),
-            (string) config('exact.auth.client_id'),
-            (string) config('exact.auth.client_secret'),
+            (string) config('services.remote.oauth2.client_id'),
+            (string) config('services.remote.oauth2.client_secret'),
         ));
 
         if (!$this->app->environment('testing')) {

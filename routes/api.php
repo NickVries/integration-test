@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => new JsonResponse([
     'meta' => [
-        'title'  => 'MyParcel.com integration microservice for ExactOnline.nl',
+        'title'  => 'MyParcel.com ' . config('app.name') . ' integration (' . config('app.version') . ')',
         'status' => 'OK',
     ],
 ]));

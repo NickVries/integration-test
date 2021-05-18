@@ -1,10 +1,10 @@
 {
-    "name": "laravel/laravel",
+    "name": "myparcelcom/integration-skeleton",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Skeleton project for MyParcel.COM e-Commerce integration microservices",
     "keywords": [
-        "framework",
-        "laravel"
+        "myparcel.com",
+        "integrations"
     ],
     "license": "MIT",
     "require": {
@@ -29,7 +29,7 @@
         "brianium/paratest": "^6.1",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
-        "laravel/sail": "^0.0.5",
+        "laravel/sail": "^1.5",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
@@ -62,7 +62,10 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_put_contents('.gitignore', str_replace('composer.lock', '', file_get_contents('.gitignore')));\""
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

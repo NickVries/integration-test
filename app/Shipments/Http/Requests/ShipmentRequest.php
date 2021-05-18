@@ -61,7 +61,7 @@ class ShipmentRequest extends FormRequest
         if (!$token) {
             throw new RequestException(
                 'Unauthorized',
-                "No ExactOnline.nl API access token found for shop ${shopId}. Is shop authenticated?",
+                "No access token found for shop ${shopId}. Is shop authenticated?",
                 401
             );
         }

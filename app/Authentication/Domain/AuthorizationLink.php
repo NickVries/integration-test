@@ -21,8 +21,8 @@ class AuthorizationLink
     {
         return Uri::fromParts([
             'scheme' => 'https',
-            'host'   => 'start.exactonline.nl',
-            'path'   => '/api/oauth2/auth',
+            'host'   => 'enter_platform_host_here.com',
+            'path'   => '/oauth2/auth',
             'query'  => http_build_query([
                 'client_id'     => $this->clientId,
                 'redirect_uri'  => $this->redirectUri . '?session_token=' . $this->sessionToken,

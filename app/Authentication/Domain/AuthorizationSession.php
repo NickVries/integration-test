@@ -15,7 +15,7 @@ use Ramsey\Uuid\Uuid;
 class AuthorizationSession
 {
     private const TOKEN_LENGTH = 20;
-    private const TOKEN_PREFIX = 'exact_auth_session:';
+    private const TOKEN_PREFIX = 'auth_session:';
     private const TOKEN_TTL = 'PT5M'; // 5 minutes
 
     public function __construct(
@@ -51,7 +51,6 @@ class AuthorizationSession
         $key = self::TOKEN_PREFIX . $token;
 
         if (!$this->cache->has($key)) {
-            /** @noinspection ThrowRawExceptionInspection */
             throw new AuthSessionExpiredException();
         }
 
