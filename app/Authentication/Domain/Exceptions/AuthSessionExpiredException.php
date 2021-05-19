@@ -11,6 +11,6 @@ class AuthSessionExpiredException extends BadRequestException
 {
     public function render(): Response
     {
-        return response('Authentication session with ExactOnline.nl has expired.', Response::HTTP_BAD_REQUEST);
+        return response('Authentication session with the remote provider has expired.', Response::HTTP_BAD_REQUEST);
     }
 }

@@ -89,11 +89,11 @@ class Token extends Model
      * This function will request new access_token
      * using the existing saved refresh_token and overwrite the old tokens
      *
-     * @param AuthServerInterface $exactOnlineAuthServer
+     * @param AuthServerInterface $authServer
      */
-    private function renew(AuthServerInterface $exactOnlineAuthServer): void
+    private function renew(AuthServerInterface $authServer): void
     {
-        $tokens = $exactOnlineAuthServer->refreshToken($this->refresh_token);
+        $tokens = $authServer->refreshToken($this->refresh_token);
 
         $this->refresh_token = $tokens['refresh_token'];
         $this->access_token = $tokens['access_token'];
@@ -107,7 +107,7 @@ class Token extends Model
      *
      * Difference with only getting the access_token property directly is
      * that in case the existing access token has expired a new one will be requested using the
-     * Exact Online auth server
+     * auth server
      *
      * @param AuthServerInterface $authServer
      * @return string

@@ -5,18 +5,13 @@ declare(strict_types=1);
 namespace App\Authentication\Domain;
 
 use App\Authentication\Domain\Exceptions\AuthRequestException;
-use App\Http\ExactAuthClient;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Utils;
 use JetBrains\PhpStorm\ArrayShape;
 
 class AuthServer implements AuthServerInterface
 {
-    private const TOKEN_ENDPOINT = 'oauth2/token';
-
     public function __construct(
-        private ExactAuthClient $client,
+        // TODO Use these client credentials with the remote authorization server
         private string $clientId,
         private string $clientSecret
     ) {
@@ -31,11 +26,8 @@ class AuthServer implements AuthServerInterface
         string $code,
         string $redirectUri
     ): array {
-        return $this->request([
-            'grant_type'   => 'authorization_code',
-            'redirect_uri' => $redirectUri,
-            'code'         => $code,
-        ]);
+        // TODO Implement logic to request an access token from the authorization server
+        // TODO Tip: use the formatResponse() method below to ensure correct data types for that expires_in and token_type
     }
 
     /**
@@ -46,31 +38,8 @@ class AuthServer implements AuthServerInterface
     public function refreshToken(
         string $refreshToken
     ): array {
-        return $this->request([
-            'grant_type'    => 'refresh_token',
-            'refresh_token' => $refreshToken,
-        ]);
-    }
-
-    /**
-     * @param array $body
-     * @return array
-     * @throws AuthRequestException|GuzzleException
-     */
-    private function request(array $body): array
-    {
-        try {
-            return $this->formatResponse(
-                Utils::jsonDecode((string) $this->client->post(self::TOKEN_ENDPOINT, [
-                    'form_params' => $body + [
-                            'client_id'     => $this->clientId,
-                            'client_secret' => $this->clientSecret,
-                        ],
-                ])->getBody(), true)
-            );
-        } catch (RequestException $exception) {
-            throw AuthRequestException::fromRequestException($exception);
-        }
+        // TODO Implement logic to refresh access token with the authorization server
+        // TODO Tip: use the formatResponse() method below to ensure correct data types for that expires_in and token_type
     }
 
     /**

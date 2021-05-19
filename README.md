@@ -1,62 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# MyParcel.com - e-Commerce Integration Skeleton
+This is a skeleton application for a microservice that converts e-Commerce orders coming from a remote API into MyParcel.com Shipment resources.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This skeleton already handles parts of the logic related to transforming order data into Shipment resources in accordance to the [MyParcel.com API Specification](https://api-specification.myparcel.com).
 
-## About Laravel
+A complete integration would:
+- Handle authentication with the remote API
+    - For OAuth 2.0 Authorization Code flow a boilerplate is already implemented within the skeleton
+- Fetch orders from the remote API, filtered by date range and transform them into MyParcel.com Shipment resources
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The skeleton is a standard Laravel application with configured Laravel Sail. Developers creating integrations using this skeleton should be familiar with the Laravel Framework. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Content
+- [Installation](#installation)
+- [Setup](#setup)
+- [TODOs](#todos)
+- [Error handling](#error-handling)
+- [Authentication](#authentication)
+- [Shipments](#shipments)
+- [Things to keep in mind](#things-to-keep-in-mind)
+- [Testing](#testing)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Installation
+The project uses Docker to run a local development environment. To install Docker, follow the steps in the [documentation](https://docs.myparcel.com/development/docker/).
 
-## Learning Laravel
+### Setup
+First, install the composer dependencies:
+```shell
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v $(pwd):/opt \
+    -w /opt \
+    laravelsail/php80-composer:latest \
+    composer install --ignore-platform-reqs
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Next, bring the sail-backed docker-compose services up:
+```shell
+vendor/bin/sail up -d
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Thirdly, run the test suite to verify everything is set up correctly:
+```shell
+vendor/bin/sail test
+```
 
-## Laravel Sponsors
+Tip: for convenience you can assign the following alias to the `sail` command in your .bashrc (or .zshrc):
+```shell
+alias sail='bash vendor/bin/sail'
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Finally, replace all occurrences of 'skeleton' with the name of the integration. Places to look for include:
+- .env
+- .env.example
+- docker-compose.yaml
+- composer.json
 
-### Premium Partners
+### TODOs
+There are several `TODO` comments added to the codebase to help you get started on what to implement. 
+There are also several tests to check if everything is working as it is supposed to. 
+The Feature tests are the starting point to check if authentication and fetching shipments is working.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+### Error handling
+Errors from the carrier should be transformed to [JSON API error objects](https://jsonapi.org/format/#error-objects). 
+You can implement the `render()` method in your custom exception classes. See [Laravel's docs instructions](https://laravel.com/docs/8.x/errors#renderable-exceptions) and App\Authentication\Domain\Exceptions\AuthRequestException::render() for an example.  
 
-## Contributing
+### Authentication
+The skeleton ships a OAuth 2.0 Authorization Code flow boiler place which is located in app/Authentication. 
+In case the platform you are integrating with also provides OAuth 2.0 (with authorization code flow) you can use the existing code. It consists of the following elements:
+- `AuthenticationController` - responsible for generating authorization links and saving access tokens.
+- `Token` - a Laravel model responsible for maintaining access tokens in a local database.
+- `AuthServer` - a gateway for connecting with the remote OAuth 2.0 server. Execute requests for acquiring new access tokens and refreshing existing ones. **You need to expand this class, so it can communicate with the OAuth 2.0 server.**
+- `AuthorizationLink` - provides means of customizing the authorization code grant link. **You need to edit this class to accommodate the platform-specific link.**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Note that every request that will be send to the integration will contain a `shop_id` query parameter. The boilerplate comes with implementation that will save token in a local postgres database using the shop_id as a primary key. 
 
-## Code of Conduct
+If you need assistance please [post a new discussion on our GitHub Discussions page](https://github.com/MyParcelCOM/integration-skeleton/discussions).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Shipments
+An example of how to transform shipments is available in the [ShipmentController](app/Shipments/Http/Controllers/ShipmentController.php).
+The controller depends on classes coming from the [MyParcelCOM/integration-commons](https://github.com/MyParcelCOM/integration-commons) package which is included by default.
+Note the following important aspects:
+- `shop_id` will always be provided and within the controller is accessible via `$request->shopId()`
+- `start_date` and `end_date` are always provided and are required query parameters when fetching shipments. They can be accessed via `$request->startDate()` and `$request->endDate()` respectively.
+- In case you rely on the `app/Authentication` boilerplate you can also easily get the relevant access token for the remote API via `$request->token()`.
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Things to keep in mind
+- The `App\Shipments\Http\Controllers\ShipmentController::get()` method is responsible for fetching shipments. Intentionally, the method does not return a standard Laravel response object, but an array of Shipment objects. This is intentional and these objects are later converted to json-api responses [automatically by a middleware](https://github.com/MyParcelCOM/integration-commons/blob/master/src/Http/Middleware/TransformsToJsonApi.php).  
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Testing
+We strongly advise you to keep the testing suite up to date. The skeleton ships a set of fundamental feature and unit tests and a number of them are marked as incomplete.
+We recommend that you unmark them and write full tests for your integration. 
