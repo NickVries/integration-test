@@ -20,7 +20,7 @@
         "laravel/tinker": "^2.5",
         "myclabs/php-enum": "^1.7",
         "myparcelcom/concurrency-safe-migrations": "^0.1",
-        "myparcelcom/integration-commons": "^v0.1",
+        "myparcelcom/integration-commons": "^v0.2",
         "ramsey/uuid": "^4.1",
         "rollbar/rollbar-laravel": "^7.0",
         "viison/address-splitter": "^0.3.4"
