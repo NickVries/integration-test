@@ -14,7 +14,7 @@ services:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
         volumes:
-            - '.:/opt/app'
+            - '.:/var/www/html'
         networks:
             - sail
         depends_on:
