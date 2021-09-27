@@ -9,7 +9,7 @@ use App\Authentication\Domain\Token;
 use Carbon\Carbon;
 use Tests\TestCase;
 
-class StatusesTest extends TestCase
+class ShipmentStatusCallbackTest extends TestCase
 {
     /** @test */
     public function test_should_update_status_tracking(): void

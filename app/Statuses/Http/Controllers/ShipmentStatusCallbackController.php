@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Statuses\Http\Controllers;
 
-use App\Statuses\Http\Requests\StatusRequest;
+use App\Statuses\Http\Requests\ShipmentStatusCallbackRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
-class StatusController
+class ShipmentStatusCallbackController
 {
     public function post(
-        StatusRequest $request
+        ShipmentStatusCallbackRequest $request
     ): JsonResponse {
         $shopId = $request->shopId();
 
@@ -24,8 +24,6 @@ class StatusController
 
         // TODO Here you can start incorporating logic to update the remote API with the status data
 
-        return response()->json([
-            'success' => true,
-        ]);
+        return response()->json();
     }
 }

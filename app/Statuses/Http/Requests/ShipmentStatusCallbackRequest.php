@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Statuses\Http\Requests;
 
 use App\Authentication\Domain\Token;
+use App\Exceptions\RequestInputException;
+use App\Exceptions\RequestUnauthorizedException;
 use Illuminate\Foundation\Http\FormRequest;
 use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 
-class StatusRequest extends FormRequest
+class ShipmentStatusCallbackRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -46,13 +48,13 @@ class StatusRequest extends FormRequest
         $shopId = $this->query('shop_id');
 
         if (!$shopId) {
-            throw new RequestException('Bad request', 'No shop_id provided in the request query', 400);
+            throw new RequestInputException('Bad request', 'No shop_id provided in the request query');
         }
 
         try {
             $shopUuid = Uuid::fromString($shopId);
         } catch (InvalidUuidStringException $exception) {
-            throw new RequestException('Unprocessable entity', 'shop_id is not a valid UUID', 422);
+            throw new RequestInputException('Unprocessable entity', 'shop_id is not a valid UUID', 422);
         }
 
         return new ShopId($shopUuid);
@@ -64,10 +66,9 @@ class StatusRequest extends FormRequest
         $token = Token::findByShopId($shopId);
 
         if (!$token) {
-            throw new RequestException(
+            throw new RequestUnauthorizedException(
                 'Unauthorized',
-                "No access token found for shop ${shopId}. Is shop authenticated?",
-                401
+                "No access token found for shop ${shopId}. Is shop authenticated?"
             );
         }
 
