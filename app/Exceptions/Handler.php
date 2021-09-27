@@ -81,7 +81,7 @@ class Handler extends ExceptionHandler
 
         $error = [
             'status' => $exception->getCode(),
-            'message' => $exception->getMessage(),
+            'detail' => $exception->getMessage(),
         ];
 
         if ($this->debug === true) {

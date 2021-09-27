@@ -34,7 +34,7 @@ class HandlerTest extends TestCase
                 'errors' => [
                     [
                         'status'  => 500,
-                        'message' => 'Some internal error',
+                        'detail' => 'Some internal error',
                     ],
                 ],
             ], $response);

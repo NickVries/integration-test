@@ -17,11 +17,11 @@ class AuthRequestException extends BadRequestException
     #[Pure]
     public function __construct(
         private string $title,
-        string $message,
+        string $detail,
         int $code = 0,
         Throwable $previous = null
     ) {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($detail, $code, $previous);
     }
 
     public static function fromRequestException(RequestException $requestException): self
@@ -47,7 +47,7 @@ class AuthRequestException extends BadRequestException
                 [
                     'status' => (string) $this->code,
                     'title'  => $this->title,
-                    'message' => $this->message,
+                    'detail' => $this->message,
                 ],
             ],
         ], $this->code);

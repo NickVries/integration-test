@@ -86,9 +86,9 @@ class AuthenticationTest extends TestCase
         $response->assertExactJson([
             'errors' => [
                 [
-                    'status'  => '400',
-                    'title'   => 'Authentication error',
-                    'message' => 'Unknown request exception',
+                    'status' => '400',
+                    'title'  => 'Authentication error',
+                    'detail' => 'Unknown request exception',
                 ],
             ],
         ]);
@@ -127,9 +127,9 @@ class AuthenticationTest extends TestCase
         $response->assertExactJson([
             'errors' => [
                 [
-                    'status'  => '400',
-                    'title'   => 'test_error',
-                    'message' => 'Testing errors',
+                    'status' => '400',
+                    'title'  => 'test_error',
+                    'detail' => 'Testing errors',
                 ],
             ],
         ]);
