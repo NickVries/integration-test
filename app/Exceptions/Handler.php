@@ -56,23 +56,23 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param Request   $request
-     * @param Throwable $exception
+     * @param Throwable $e
      * @return JsonResponse
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e)
     {
-        if (method_exists($exception, 'render') && $response = $exception->render($request)) {
+        if (method_exists($e, 'render') && $response = $e->render($request)) {
             return Router::toResponse($request, $response);
-        } elseif ($exception instanceof Responsable) {
-            return $exception->toResponse($request);
+        } elseif ($e instanceof Responsable) {
+            return $e->toResponse($request);
         }
 
-        if ($exception instanceof ValidationException) {
+        if ($e instanceof ValidationException) {
             return $this->responseFactory->json(
                 [
-                    'errors' => $this->mapValidationException($exception),
+                    'errors' => $this->mapValidationException($e),
                 ],
-                $exception->getCode(),
+                $e->getCode(),
                 [
                     'Content-Type' => 'application/vnd.api+json',
                 ]
@@ -80,12 +80,12 @@ class Handler extends ExceptionHandler
         }
 
         $error = [
-            'status' => $exception->getCode(),
-            'detail' => $exception->getMessage(),
+            'status' => $e->getCode(),
+            'detail' => $e->getMessage(),
         ];
 
-        if ($this->debug === true) {
-            $error['trace'] = $this->getTrace($exception);
+        if ($this->debug) {
+            $error['trace'] = $e->getTrace();
         }
 
         return $this->responseFactory->json(
@@ -94,7 +94,7 @@ class Handler extends ExceptionHandler
                     $error,
                 ],
             ],
-            $exception->getCode(),
+            $e->getCode(),
             [
                 'Content-Type' => 'application/vnd.api+json',
             ]
@@ -124,18 +124,5 @@ class Handler extends ExceptionHandler
         }
 
         return $errors;
-    }
-
-    private function getTrace(Throwable $exception): string
-    {
-        try {
-            if (json_encode($exception->getTrace()) === false) {
-                return 'Trace is not available.';
-            }
-        } catch (Throwable $e) {
-            return 'Trace is not available.';
-        }
-
-        return json_encode($exception->getTrace());
     }
 }
