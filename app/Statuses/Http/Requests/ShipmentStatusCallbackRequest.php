@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Shipments\Http\Requests;
+declare(strict_types=1);
+
+namespace App\Statuses\Http\Requests;
 
 use App\Authentication\Domain\Token;
 use App\Exceptions\RequestInputException;
 use App\Exceptions\RequestUnauthorizedException;
-use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 
-class ShipmentRequest extends FormRequest
+class ShipmentStatusCallbackRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -28,14 +29,18 @@ class ShipmentRequest extends FormRequest
         return [];
     }
 
-    public function startDate(): Carbon
+    public function getShipmentData(): array
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->input('filter.start_date') . ' 00:00:00');
+        $included = $this->get('included');
+
+        return collect($included)->first(fn ($include) => $include['type'] === 'shipments');
     }
 
-    public function endDate(): Carbon
+    public function getStatusData(): array
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->input('filter.end_date') . ' 23:59:59');
+        $included = $this->get('included');
+
+        return collect($included)->first(fn ($include) => $include['type'] === 'statuses');
     }
 
     public function shopId(): ShopId

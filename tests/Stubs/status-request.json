@@ -1,0 +1,188 @@
+{
+    "data": {
+        "type": "shipment-statuses",
+        "id": "9e6d8dba-7c45-4351-a9fc-b55a0cbafbad",
+        "attributes": {
+            "carrier_statuses": [
+                {
+                    "code": "9001",
+                    "description": "Confirmed at destination",
+                    "assigned_at": 1504801719
+                }
+            ],
+            "errors": [
+                {
+                    "status": "422",
+                    "code": "12345",
+                    "title": "Value is too long",
+                    "detail": "The description field exceeds the limit of 25 characters.",
+                    "source": {
+                        "pointer": "/data/attributes/description",
+                        "parameter": "include"
+                    },
+                    "meta": {
+                        "carrier_response": "ParcelDescription1 exceeds character limit.",
+                        "carrier_status": "400",
+                        "carrier_rules": [
+                            {
+                                "type": "max-length",
+                                "value": "35"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "created_at": 1504801719
+        }
+    },
+    "included": [
+        {
+            "id": "8104d8ce-fc41-42c6-9b6a-90ffa4f64ecc",
+            "type": "statuses",
+            "attributes": {
+                "code": "shipment-delivered",
+                "resource_type": "shipments",
+                "level": "success",
+                "name": "Delivered",
+                "description": "The shipment was delivered successfully."
+            }
+        },
+        {
+            "id": "b4b888c8-b3e0-42b0-b78f-8b2fd9ddf74c",
+            "type": "shipments",
+            "attributes": {
+                "myparcelcom_shipment_id": "bbacd0c7-9ec5-42df-9870-443b8e1a7155",
+                "recipient_address": {
+                    "street_1": "Some road",
+                    "street_2": "Room 3",
+                    "street_number": 679,
+                    "street_number_suffix": "A",
+                    "postal_code": "2131BC",
+                    "city": "Amsterdam",
+                    "country_code": "GB",
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "phone_number": "+31 234 567 890",
+                    "email": "john@doe.com"
+                },
+                "recipient_tax_identification_numbers": [
+                    {
+                        "country_code": "NL",
+                        "number": "YI123456789",
+                        "type": "eori"
+                    }
+                ],
+                "recipient_tax_number": "H111111-11",
+                "sender_address": {
+                    "street_1": "Streeterino",
+                    "street_number": 622,
+                    "postal_code": "1GL HF1",
+                    "city": "Bamsterbam",
+                    "country_code": "GB",
+                    "company": "Acme Jewelry Co.",
+                    "phone_number": "+31 234 567 890",
+                    "email": "john@acme.com"
+                },
+                "sender_tax_identification_numbers": [
+                    {
+                        "country_code": "GB",
+                        "number": "XI123456789",
+                        "type": "eori"
+                    }
+                ],
+                "sender_tax_number": "G666666-66",
+                "tax_identification_numbers": [
+                    {
+                        "country_code": "GB",
+                        "number": "XI123456789",
+                        "type": "eori"
+                    }
+                ],
+                "return_address": {
+                    "street_1": "Baker Street",
+                    "street_number": 221,
+                    "postal_code": "NW1 6XE",
+                    "city": "London",
+                    "country_code": "GB",
+                    "phone_number": "+31 234 567 890",
+                    "company": "Holmes Investigations",
+                    "first_name": "Sherlock",
+                    "last_name": "Holmes",
+                    "email": "s.holmes@holmesinvestigations.com"
+                },
+                "description": "order #8008135",
+                "total_value": {
+                    "amount": 42,
+                    "currency": "EUR"
+                },
+                "service": {
+                    "code": "usps-priority-mail",
+                    "name": "Parcel to Parcelshop"
+                },
+                "tracking_code": "3SABCD0123456789",
+                "physical_properties": {
+                    "weight": 500,
+                    "height": 100,
+                    "width": 200,
+                    "length": 250,
+                    "volume": 5.5,
+                    "volumetric_weight": 17
+                },
+                "options": [
+                    {
+                        "code": "delivery-day:sunday",
+                        "name": "Sunday Delivery"
+                    },
+                    {
+                        "code": "pin-code",
+                        "name": "Pin code",
+                        "values": {
+                            "pin": "1234"
+                        }
+                    }
+                ],
+                "items": [
+                    {
+                        "sku": "13657za",
+                        "description": "XBox 360",
+                        "image_url": "//no.windows",
+                        "item_value": {
+                            "amount": 30000,
+                            "currency": "EUR"
+                        },
+                        "item_weight": 1500,
+                        "quantity": 2,
+                        "hs_code": "1234.15.05",
+                        "origin_country_code": "GB"
+                    },
+                    {
+                        "sku": "654324re",
+                        "description": "Playstation 2",
+                        "image_url": "//pc.master.race",
+                        "item_value": {
+                            "amount": 20000,
+                            "currency": "EUR"
+                        },
+                        "item_weight": 2500,
+                        "quantity": 1,
+                        "hs_code": "1234.15.05",
+                        "origin_country_code": "GB"
+                    }
+                ],
+                "customs": {
+                    "content_type": "gifts",
+                    "invoice_number": "876543",
+                    "non_delivery": "return",
+                    "incoterm": "DAP",
+                    "shipping_value": {
+                        "amount": 98765,
+                        "currency": "GBP"
+                    }
+                },
+                "channel": "Amazon"
+            },
+            "relationships": {
+            }
+        }
+    ]
+}

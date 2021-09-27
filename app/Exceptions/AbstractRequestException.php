@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shipments\Http\Requests;
+namespace App\Exceptions;
 
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;
@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use function response;
 
-class RequestException extends InvalidArgumentException
+abstract class AbstractRequestException extends InvalidArgumentException
 {
     #[Pure]
     public function __construct(
-        private string $title,
+        protected string $title,
         string $detail,
         int $code = 0,
         Throwable $previous = null
