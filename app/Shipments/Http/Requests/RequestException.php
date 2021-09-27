@@ -15,11 +15,11 @@ class RequestException extends InvalidArgumentException
     #[Pure]
     public function __construct(
         private string $title,
-        string $detail,
+        string $message,
         int $code = 0,
         Throwable $previous = null
     ) {
-        parent::__construct($detail, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 
     public function render(): Response
@@ -29,7 +29,7 @@ class RequestException extends InvalidArgumentException
                 [
                     'status' => (string) $this->code,
                     'title'  => $this->title,
-                    'detail' => $this->message,
+                    'message' => $this->message,
                 ],
             ],
         ], $this->code);
