@@ -6,9 +6,11 @@ namespace App\Exceptions;
 
 use App\Authentication\Domain\Exceptions\AuthRequestException;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -59,6 +61,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if (method_exists($exception, 'render') && $response = $exception->render($request)) {
+            return Router::toResponse($request, $response);
+        } elseif ($exception instanceof Responsable) {
+            return $exception->toResponse($request);
+        }
+
         if ($exception instanceof ValidationException) {
             return $this->responseFactory->json(
                 [
@@ -73,7 +81,7 @@ class Handler extends ExceptionHandler
 
         $error = [
             'status' => $exception->getCode(),
-            'message' => $exception->getMessage(),
+            'detail' => $exception->getMessage(),
         ];
 
         if ($this->debug === true) {
