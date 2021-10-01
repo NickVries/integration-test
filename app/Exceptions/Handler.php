@@ -94,7 +94,7 @@ class Handler extends ExceptionHandler
                     $error,
                 ],
             ],
-            $e->getCode(),
+            $e->getCode() ? $e->getCode() : 500,
             [
                 'Content-Type' => 'application/vnd.api+json',
             ]
