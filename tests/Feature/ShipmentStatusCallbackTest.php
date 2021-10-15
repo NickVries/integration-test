@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Authentication\Domain\ExpiresAt;
 use App\Authentication\Domain\Token;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class ShipmentStatusCallbackTest extends TestCase
@@ -19,9 +20,10 @@ class ShipmentStatusCallbackTest extends TestCase
 
         $requestStub = file_get_contents(base_path('tests/Stubs/status-request.json'));
         $data = json_decode($requestStub, true);
+        Arr::set($data, 'included.1.relationships.shop.data.id', $token->shop_id->toString());
 
         $response = $this->post(
-            '/callback/shipment-statuses?shop_id=' . $token->shop_id,
+            '/callback/shipment-statuses',
             $data
         );
 
