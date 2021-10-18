@@ -8,6 +8,7 @@ use App\Authentication\Domain\Token;
 use App\Exceptions\RequestInputException;
 use App\Exceptions\RequestUnauthorizedException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use MyParcelCom\Integration\ShopId;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
@@ -45,10 +46,10 @@ class ShipmentStatusCallbackRequest extends FormRequest
 
     public function shopId(): ShopId
     {
-        $shopId = $this->query('shop_id');
+        $shopId = Arr::get($this->getShipmentData(), 'relationships.shop.data.id');
 
         if (!$shopId) {
-            throw new RequestInputException('Bad request', 'No shop_id provided in the request query');
+            throw new RequestInputException('Bad request', 'No shop_id provided in the request body');
         }
 
         try {
