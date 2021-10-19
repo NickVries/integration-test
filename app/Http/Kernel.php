@@ -20,6 +20,7 @@ use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
+use MyParcelCom\Integration\Http\Middleware\MatchingChannelOnly;
 use MyParcelCom\Integration\Http\Middleware\TransformsToJsonApi;
 
 class Kernel extends HttpKernel
@@ -69,5 +70,6 @@ class Kernel extends HttpKernel
         'throttle'              => ThrottleRequests::class,
         'verified'              => EnsureEmailIsVerified::class,
         'transform_to_json_api' => TransformsToJsonApi::class,
+        'matching_channel_only' => MatchingChannelOnly::class,
     ];
 }

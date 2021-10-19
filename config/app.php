@@ -44,14 +44,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Application version
+    | Default shipment channel
     |--------------------------------------------------------------------------
     |
-    | Application version can be used as a value for the 'channel' shipment property
+    | Value for the shipment's channel attribute. Defaults to combindation
+    | of the integration code and application version.
     |
     */
 
-    'version' => env('APP_VERSION', 'IntegrationSkeleton'),
+    'channel' => env('INTEGRATION_CODE', 'skeleton') . '_' . env('APP_VERSION', 'local'),
 
     /*
     |--------------------------------------------------------------------------
