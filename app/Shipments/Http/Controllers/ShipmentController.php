@@ -54,7 +54,7 @@ class ShipmentController
                 ),
                 description: 'Google Chromecast Ultra',
                 customerReference: '#1234567890',
-                channel: config('app.version'),
+                channel: config('app.channel'),
                 totalValue: new Price(4000, 'EUR'), // amount is in cents
                 price: new Price(4000, 'EUR'),
                 physicalProperties: new PhysicalProperties(
@@ -92,7 +92,7 @@ class ShipmentController
                 ),
                 description: 'Google Stadia Controller',
                 customerReference: '#XYZ12345',
-                channel: config('app.version'),
+                channel: config('app.channel'),
                 totalValue: new Price(80000, 'GBP'),
                 price: new Price(80000, 'GBP'),
                 physicalProperties: new PhysicalProperties(

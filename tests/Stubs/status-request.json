@@ -179,7 +179,7 @@
                         "currency": "GBP"
                     }
                 },
-                "channel": "Amazon"
+                "channel": "skeleton_test"
             },
             "relationships": {
             }

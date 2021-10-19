@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => new JsonResponse([
     'meta' => [
-        'title'  => 'MyParcel.com ' . config('app.name') . ' integration (' . config('app.version') . ')',
+        'title'  => 'MyParcel.com ' . config('app.name') . ' (' . config('app.channel') . ')',
         'status' => 'OK',
     ],
 ]));
@@ -28,4 +28,5 @@ Route::get('shipments', ShipmentController::class . '@get')
     ->middleware('transform_to_json_api');
 
 Route::post('callback/shipment-statuses', ShipmentStatusCallbackController::class . '@post')
-    ->name('shipment-statuses');
+    ->name('shipment-statuses')
+    ->middleware('matching_channel_only:' . config('app.channel'));
