@@ -7,12 +7,12 @@ namespace App\Providers;
 use App\Authentication\Domain\AuthorizationSession;
 use App\Authentication\Domain\AuthServer;
 use App\Authentication\Domain\AuthServerInterface;
-use App\Exceptions\Handler;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
+use MyParcelCom\Integration\Exceptions\Handler;
 
 use function config;
 
