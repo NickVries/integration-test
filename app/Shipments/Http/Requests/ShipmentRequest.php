@@ -75,7 +75,7 @@ class ShipmentRequest extends FormRequest
      */
     public function pageNumber(): ?int
     {
-        return (int) $this->query('pageNumber');
+        return $this->query('pageNumber') ? (int) $this->query('pageNumber') : null;
     }
 
     /**
@@ -83,6 +83,6 @@ class ShipmentRequest extends FormRequest
      */
     public function pageSize(): ?int
     {
-        return (int) $this->query('pageSize');
+        return $this->query('pageSize') ? (int) $this->query('pageSize') : null;
     }
 }
