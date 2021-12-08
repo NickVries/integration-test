@@ -37,6 +37,9 @@ class ShipmentController
         $pageNumber = $request->pageNumber();
         $pageSize = $request->pageSize();
 
+        // TODO if the integration is configured to use an offset, calculate it here
+        $offset = $this->pageOffset($pageNumber, $pageSize);
+
         // TODO Here you can start incorporating logic that converts orders from the remote API into Shipment objects
         return [
             // This is an example shipment
@@ -118,5 +121,19 @@ class ShipmentController
                 ),
             ),
         ];
+    }
+
+    /**
+     * @param int $pageNumber
+     * @param int $pageSize
+     * @return int|null
+     */
+    private function pageOffset(int $pageNumber, int $pageSize): ?int
+    {
+        if (!$pageNumber || !$pageSize) {
+            return null;
+        }
+
+        return ($pageNumber - 1) * $pageSize;
     }
 }
