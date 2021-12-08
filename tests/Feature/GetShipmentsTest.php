@@ -63,4 +63,20 @@ class GetShipmentsTest extends TestCase
 
         self::markTestSkipped('Write test after getting shipments is implemented');
     }
+
+    public function test_should_get_shipments_with_page_and_size_parameters(): void
+    {
+        $token = $this->createActiveToken();
+
+        $response = $this->get(
+            '/shipments?shop_id='
+            . $token->shop_id
+            . '&filter[start_date]=2020-01-01'
+            . '&filter[end_date]=2022-01-01'
+            . '&page_number=1'
+            . '&page_size=10'
+        );
+
+        $response->assertStatus(200);
+    }
 }

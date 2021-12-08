@@ -69,4 +69,20 @@ class ShipmentRequest extends FormRequest
 
         return $token;
     }
+
+    /**
+     * @return int|null
+     */
+    public function pageNumber(): ?int
+    {
+        return $this->query('pageNumber') ? (int) $this->query('pageNumber') : null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function pageSize(): ?int
+    {
+        return $this->query('pageSize') ? (int) $this->query('pageSize') : null;
+    }
 }
