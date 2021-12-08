@@ -33,6 +33,10 @@ class ShipmentController
         $startDate = $request->startDate();
         $endDate = $request->endDate();
 
+        // TODO use the number and size as pagination for the integration
+        $pageNumber = $request->pageNumber();
+        $pageSize = $request->pageSize();
+
         // TODO Here you can start incorporating logic that converts orders from the remote API into Shipment objects
         return [
             // This is an example shipment
