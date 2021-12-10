@@ -124,11 +124,11 @@ class ShipmentController
     }
 
     /**
-     * @param int $pageNumber
-     * @param int $pageSize
+     * @param int|null $pageNumber
+     * @param int|null $pageSize
      * @return int|null
      */
-    private function pageOffset(int $pageNumber, int $pageSize): ?int
+    private function pageOffset(?int $pageNumber, ?int $pageSize): ?int
     {
         if (!$pageNumber || !$pageSize) {
             return null;

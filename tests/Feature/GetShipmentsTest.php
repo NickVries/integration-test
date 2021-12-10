@@ -43,8 +43,8 @@ class GetShipmentsTest extends TestCase
             . $token->shop_id
             . '&filter[start_date]=2020-01-01'
             . '&filter[end_date]=2022-01-01'
-            . '&page_number=1'
-            . '&page_size=10'
+            . '&page[number]=1'
+            . '&page[size]=10'
         );
 
         $response->assertStatus(200);
@@ -75,8 +75,8 @@ class GetShipmentsTest extends TestCase
             . $token->shop_id
             . '&filter[start_date]=2020-01-01'
             . '&filter[end_date]=2022-01-01'
-            . '&page_number=1'
-            . '&page_size=10'
+            . '&page[number]=1'
+            . '&page[size]=10'
         );
 
         $response->assertStatus(200);
