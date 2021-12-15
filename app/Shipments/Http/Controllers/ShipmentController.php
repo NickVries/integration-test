@@ -41,7 +41,8 @@ class ShipmentController
         $offset = $this->pageOffset($pageNumber, $pageSize);
 
         // TODO Here you can start incorporating logic that converts orders from the remote API into Shipment objects
-        return [
+        // Use the Shipment object to represent orders as shipments
+        $items = [
             // This is an example shipment
             new Shipment(
                 shopId: $shopId,
@@ -120,6 +121,15 @@ class ShipmentController
                     ),
                 ),
             ),
+        ];
+
+        // TODO this is the total number of orders for all pages
+        $totalOrders = 123;
+
+        return [
+            'items'         => $items,
+            'total_records' => $totalOrders,
+            'total_pages'   => (int) ceil($totalOrders / $pageSize),
         ];
     }
 

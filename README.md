@@ -83,7 +83,7 @@ Note the following important aspects:
 - `shop_id` will always be provided and within the controller is accessible via `$request->shopId()`
 - `start_date` and `end_date` are always provided and are required query parameters when fetching shipments. They can be accessed via `$request->startDate()` and `$request->endDate()` respectively.
 - In case you rely on the `app/Authentication` boilerplate you can also easily get the relevant access token for the remote API via `$request->token()`.
-
+- Pagination is always required. The [ShipmentController](app/Shipments/Http/Controllers/ShipmentController.php) has examples on how to get page size, page number (or offset as an alternative) that can be used to utilize pagination at a remote service. Make sure to provide the total number of shipments across all pages (check the variable `$totalOrders`).
 
 ### Things to keep in mind
 - The `App\Shipments\Http\Controllers\ShipmentController::get()` method is responsible for fetching shipments. Intentionally, the method does not return a standard Laravel response object, but an array of Shipment objects. This is intentional and these objects are later converted to json-api responses [automatically by a middleware](https://github.com/MyParcelCOM/integration-commons/blob/master/src/Http/Middleware/TransformsToJsonApi.php).  
