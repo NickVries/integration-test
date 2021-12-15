@@ -6,6 +6,7 @@ namespace App\Shipments\Http\Controllers;
 
 use App\Shipments\Http\Requests\ShipmentRequest;
 use Carbon\Carbon;
+use JetBrains\PhpStorm\ArrayShape;
 use MyParcelCom\Integration\Shipment\Address;
 use MyParcelCom\Integration\Shipment\Items\Item;
 use MyParcelCom\Integration\Shipment\Items\ItemCollection;
@@ -16,10 +17,11 @@ use function config;
 
 class ShipmentController
 {
-    /**
-     * @param ShipmentRequest $request
-     * @return Shipment[]
-     */
+    #[ArrayShape([
+        'items'         => "\MyParcelCom\Integration\Shipment\Shipment[]",
+        'total_records' => "int",
+        'total_pages'   => "int"
+    ])]
     public function get(ShipmentRequest $request): array
     {
         // TODO Shop UUID is always provided and you should use it to distinguish
