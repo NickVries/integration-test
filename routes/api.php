@@ -20,6 +20,9 @@ Route::group(
     function () {
         Route::post('init-auth', AuthenticationController::class . '@init')->name('init-auth');
         Route::get('authenticate', AuthenticationController::class . '@authenticate')->name('authenticate');
+        Route::get('auth', function () {
+            return view('auth');
+        })->name('auth');
     }
 );
 

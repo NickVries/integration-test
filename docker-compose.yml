@@ -1,7 +1,7 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
-    integration.skeleton:
+    integration.test:
         build:
             context: ./docker/8.0
             dockerfile: Dockerfile
@@ -17,24 +17,9 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+            - apinet
         depends_on:
-            - pgsql
             - redis
-    pgsql:
-        image: 'postgres:13'
-        ports:
-            - '${FORWARD_DB_PORT:-5432}:5432'
-        environment:
-            PGPASSWORD: '${DB_PASSWORD:-secret}'
-            POSTGRES_DB: '${DB_DATABASE}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-        volumes:
-            - 'sailpgsql:/var/lib/postgresql/data'
-        networks:
-            - sail
-        healthcheck:
-          test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
     redis:
         image: 'redis:alpine'
         ports:
@@ -48,6 +33,9 @@ services:
 networks:
     sail:
         driver: bridge
+    apinet:
+      external:
+        name: myparcelapi_apinet
 volumes:
     sailpgsql:
         driver: local
