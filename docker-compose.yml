@@ -1,43 +1,41 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
-    integration.test:
-        build:
-            context: ./docker/8.0
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: myparcelcom/integration-skeleton:v1-dev
-        ports:
-            - '${APP_PORT:-80}:80'
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-            - apinet
-        depends_on:
-            - redis
-    redis:
-        image: 'redis:alpine'
-        ports:
-            - '${FORWARD_REDIS_PORT:-6379}:6379'
-        volumes:
-            - 'sailredis:/data'
-        networks:
-            - sail
-        healthcheck:
-          test: ["CMD", "redis-cli", "ping"]
+  integration.test:
+    build:
+      context: ./docker/8.0
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    image: myparcelcom/integration-test:v1-dev
+    ports:
+      - '${APP_PORT:-80}:80'
+    environment:
+      WWWUSER: '${WWWUSER}'
+      LARAVEL_SAIL: 1
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - sail
+      - apinet
+    depends_on:
+      - redis
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    volumes:
+      - 'sailredis:/data'
+    networks:
+      - sail
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
 networks:
-    sail:
-        driver: bridge
-    apinet:
-      external:
-        name: myparcelapi_apinet
+  sail:
+    driver: bridge
+  apinet:
+    external:
+      name: myparcelapi_apinet
 volumes:
-    sailpgsql:
-        driver: local
-    sailredis:
-        driver: local
+  sailredis:
+    driver: local

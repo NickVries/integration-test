@@ -14,7 +14,7 @@
 
             <form action="{{ app('request')->get('redirect_uri') }}">
                 <input type="hidden" name="session_token" value="{{ last($sessionToken) }}">
-                <button type="submit">Connect</button>
+                <button style="padding: 50px; font-size: 24px; cursor: pointer;" type="submit">Connect</button>
             </form>
         </div>
     </body>
