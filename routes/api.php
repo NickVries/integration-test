@@ -6,9 +6,11 @@ use App\Authentication\Http\Controllers\AuthenticationController;
 use App\Shipments\Http\Controllers\ShipmentController;
 use App\Statuses\Http\Controllers\ShipmentStatusCallbackController;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => new JsonResponse([
+Route::get('/', fn () => new JsonResponse([
     'meta' => [
         'title'  => 'MyParcel.com ' . config('app.name') . ' (' . config('app.channel') . ')',
         'status' => 'OK',
@@ -25,6 +27,14 @@ Route::group(
         })->name('auth');
     }
 );
+
+Route::post('/shops/{shop_id}/setup', function (Request $request, string $shop_id) {
+    Log::debug('settings: ', [
+        'shop_id'  => $shop_id,
+        'settings' => $request->json('data'),
+    ]);
+});
+Route::post('/shops/{shop_id}/teardown', fn () => new JsonResponse(null, 204));
 
 Route::get('shipments', ShipmentController::class . '@get')
     ->name('get-shipments')
